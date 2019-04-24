@@ -287,3 +287,5 @@ dmypy.json
 
 # End of https://www.gitignore.io/api/web,python,pycharm,webstorm,visualstudiocode
 
+
+\.idea/

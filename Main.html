@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hector 9000</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
+</head>
+<body onload="startup()">
+<script>
+    var displays = [];
+    var displaystate = 0;
+    var jsont = '{"items": [' +
+        '{"name": "bla1","id": "bla1", "alcohol": true},' +
+        '{"name": "bla2","id": "bla2", "alcohol": false},' +
+        '{"name": "bla3","id": "bla3", "alcohol": false},' +
+        '{"name": "bla4","id": "bla4", "alcohol": false},' +
+        '{"name": "bla5","id": "bla5", "alcohol": true},' +
+        '{"name": "bla6","id": "bla6", "alcohol": true},' +
+        '{"name": "bla7","id": "bla7", "alcohol": false}' +
+        ']' +
+        '}';
+
+
+    function generateButtons() {
+        var json = JSON.parse(jsont);
+        jl = json.items.length;
+        cont = document.getElementById("content");
+        count = 0;
+        teiler = parseInt(jl / 6);
+        for (i = 0; i < parseInt(jl / 6); i++) {
+            count++;
+            html = '<div class="buttons" id="id' + (i + 1) + '">';
+            html += '<div class="row r1">';
+            for (j = 0; j < 3; j++) {
+                html += '<div class="button';
+                if (json.items[(6 * i + j)].alcohol) {
+                    html += ' alc';
+                }
+                html += '" id="' + json.items[(6 * i + j)].id + '"><div class="name">' + json.items[(6 * i + j)].name + '</div></div>';
+            }
+            html += '</div><div class="row r2">';
+            for (j = 0; j < 3; j++) {
+                html += '<div class="button';
+                if (json.items[(6 * i + j + 3)].alcohol) {
+                    html += ' alc';
+                }
+                html += '" id="' + json.items[(6 * i + 3 + j)].id + '"><div class="name">' + json.items[(6 * i + j + 3)].name + '</div></div>';
+            }
+            html += '</div></div>';
+            cont.innerHTML += html;
+            displays.push("id" + (i + 1));
+        }
+        rest = json.items.length % 6;
+        ammont = (teiler * 6);
+        if (rest > 0) {
+            ct = 0;
+            html = '<div class="buttons" id="id' + (count + 1) + '"><div class="row r1">';
+            if (rest >= 4) {
+                for (i = 0; i < 3; i++) {
+                    html += '<div class="button';
+                    if (json.items[(ammont + i)].alcohol) {
+                        html += ' alc';
+                    }
+                    html += '" id="' + json.items[(ammont + i)].id + '"><div class="name">' + json.items[(ammont + i)].name + '</div></div>';
+                }
+                html += '</div><div class="row r2">';
+                ct = 3;
+            }
+            do {
+                html += '<div class="button ';
+                if (json.items[ammont + ct].alcohol) {
+                    html += 'alc';
+                }
+                html += '" id="' + json.items[ammont + ct].id + '"><div class="name">' + json.items[ammont + ct].name + '</div></div>';
+
+                ct++;
+            } while (ct < rest);
+            html += '</div></div>';
+            cont.innerHTML += html;
+            displays.push("id" + (count + 1));
+        }
+    }
+
+    function startup() {
+        generateButtons();
+        for(i = 0; i < displays.length; i++){
+            document.getElementById(displays[i]).style.right = "" + (-i *100 + 10) + "%";
+        }
+        document.addEventListener('keydown', keydown);
+    }
+
+    function keydown(e){
+        if(e.code === "ArrowRight" || e.code === "KeyD"){
+            right();
+        }else if(e.code === "ArrowLeft" || e.code === "KeyA"){
+            left();
+        }
+    }
+
+    function right() {
+        if(displaystate < displays.length - 1){
+            displaystate++;
+            for(i = 0; i < displays.length; i++){
+                rg = "" + ((-i + displaystate) * 100 + 10) + "%";
+                document.getElementById(displays[i]).style.right = rg;
+            }
+        }
+    }
+
+    function left() {
+        if(displaystate > 0 ){
+            displaystate--;
+            for(i = 0; i < displays.length; i++){
+                rg = "" + ((-i + displaystate)*100 + 10) + "%";
+                document.getElementById(displays[i]).style.right = rg;
+            }
+        }
+    }
+
+
+
+</script>
+<style>
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+        color: #FFFFFF;
+    }
+
+    .fas-s {
+        font-size: 5rem;
+    }
+
+    .side-but {
+        background-color: grey;
+        padding-right: 5px;
+        padding-left: 5px;
+        border-radius: 5px
+    }
+
+    #content {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .row {
+        height: 40%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+
+    }
+
+    .button {
+        background-color: green;
+        width: 28%;
+        margin-right: auto;
+        margin-left: auto;
+        height: 90%;
+        display: flex;
+    }
+
+    .alc {
+        background-color: red !important;
+    }
+
+    .name {
+        margin: auto;
+        text-align: center;
+        width: 100%;
+        color: #000;
+        font-size: 2rem;
+        margin-top: auto;
+        margin-bottom: auto;
+        position: relative;
+        top: -1rem;
+    }
+
+    .buttons {
+        width: 80%;
+        height: 90%;
+        overflow-y: hidden;
+        position: fixed;
+        top: 15%;
+        right: 10%;
+        display: flex;
+        flex-direction: column;
+        transition-property: right;
+        transition-delay: 0ms;
+        transition-duration: 1s;
+        z-index: 10;
+    }
+
+    .r1 {
+        margin-top: 3%;
+        margin-bottom: 3%;
+    }
+
+    #header {
+        width: 100%;
+        height: 15%;
+        display: flex;
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    #title {
+        margin: auto;
+    }
+
+    #config-but {
+        width: 40px;
+        height: 40px;
+        position: fixed;
+        top: calc(7.5% - 8px);
+        right: calc(7.5% - 20px);
+    }
+
+    .side {
+        width: 10%;
+        height: 85%;
+        position: fixed;
+        top: 15%;
+        display: flex;
+        z-index: 99;
+        background-color: black;
+    }
+
+    #right-side {
+        right: 0;
+    }
+
+    #right-but {
+        margin: auto;
+    }
+
+    #left-but {
+        margin: auto;
+    }
+
+    #left-side {
+        left: 0;
+    }
+
+    .fa-cog {
+        font-size: 40px;
+    }
+
+    #h9 {
+        font-size: 6rem;
+        font-weight: bold;
+    }
+
+    .d0 {
+        right: 10%;
+    }
+
+    .d1 {
+        right: -110%;
+    }
+
+</style>
+<div id="content">
+    <div id="header">
+        <div id="title">
+            <span id="h9">Hector 9000</span>
+        </div>
+        <div id="config-but">
+            <i class="fas fa-cog"></i>
+        </div>
+    </div>
+    <div id="right-side" class="side">
+        <div class="side-but" id="right-but" onclick="right()">
+            <i class="fas fa-caret-right fas-s"></i>
+        </div>
+    </div>
+    <div id="left-side" class="side">
+        <div class="side-but" id="left-but" onclick="left()">
+            <i class="fas fa-caret-left fas-s"></i>
+        </div>
+    </div>
+</div>
+</body>
+</html>

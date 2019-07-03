@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Hector 9000</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"
+            type="text/javascript"></script>
 </head>
 <body onload="startup()">
 <script>
@@ -13,28 +14,53 @@
     var drinkmodal = false;
     var configmodal = false;
     var processing = false;
-    var jsont = '{"items": [' +
-        '{"name": "bla1","id": "bla1", "alcohol": true},' +
-        '{"name": "bla2","id": "bla2", "alcohol": false},' +
-        '{"name": "bla3","id": "bla3", "alcohol": false},' +
-        '{"name": "bla4","id": "bla4", "alcohol": false},' +
-        '{"name": "bla5","id": "bla5", "alcohol": true},' +
-        '{"name": "bla6","id": "bla6", "alcohol": true},' +
-        '{"name": "bla7","id": "bla7", "alcohol": false}' +
+    var waitingfordrinks = true;
+    var waitingforingredients = false;
+    var testing = true;
+    var host = "1.1.1.1";
+    var port = "1234";
+    var mqtt;
+    var drinktopic = "Hector9000/get_items";
+    var ingredientstopic = "Hector9000/get_ingredients";
+
+    function IngredientSubscriber(payload) {
+        if (waitingforingredients) {
+            waitingforingredients = false;
+            DrinkModal(payload);
+        }
+    }
+
+    function DrinkSubscriber(payload) {
+        if (waitingfordrinks) {
+            generateButtons(payload);
+            waitingfordrinks = false;
+        }
+    }
+
+    //umbenennen in drinks -> items
+    var jsont = '{"drinks": [' +
+        '{"name": "bla1","id": 123, "alcohol": true},' +
+        '{"name": "bla2","id": 123, "alcohol": false},' +
+        '{"name": "bla3","id": 123, "alcohol": false},' +
+        '{"name": "bla4","id": 123, "alcohol": false},' +
+        '{"name": "bla5","id": 123, "alcohol": true},' +
+        '{"name": "bla6","id": 123, "alcohol": true},' +
+        '{"name": "bla7","id": 123, "alcohol": false}' +
         ']' +
         '}';
-    function generateButton(name, id, alc){
+
+    function generateButton(name, id, alc) {
         shtml = '<div onclick="opendrink(this)" class="button ';
-        if(alc){
+        if (alc) {
             shtml += 'alc';
         }
-        shtml  += '" d_id="' + id + '"><div class="name">' + name + "</div></div>";
+        shtml += '" d_id="' + id + '"><div class="name">' + name + "</div></div>";
         return shtml;
     }
 
-    function generateButtons() {
-        var json = JSON.parse(jsont);
-        jl = json.items.length;
+    function generateButtons(drinksjson) {
+        var json = JSON.parse(drinksjson);
+        jl = json.drinks.length;
         cont = document.getElementById("content");
         count = 0;
         teiler = parseInt(jl / 6);
@@ -43,67 +69,71 @@
             html = '<div class="buttons" id="id' + (i + 1) + '">';
             html += '<div class="row r1">';
             for (j = 0; j < 3; j++) {
-                html += generateButton(json.items[(6 * i + j)].name, json.items[(6 * i + j)].id, json.items[(6 * i + j)].alcohol);
+                html += generateButton(json.drinks[(6 * i + j)].name, json.drinks[(6 * i + j)].id, json.drinks[(6 * i + j)].alcohol);
             }
             html += '</div><div class="row r2">';
             for (j = 0; j < 3; j++) {
-                html += generateButton(json.items[(6 * i + 3 + j)].name, json.items[(6 * i + 3 + j)].id, json.items[(6 * i + 3 + j)].alcohol);
+                html += generateButton(json.drinks[(6 * i + 3 + j)].name, json.drinks[(6 * i + 3 + j)].id, json.drinks[(6 * i + 3 + j)].alcohol);
             }
             html += '</div></div>';
             cont.innerHTML += html;
             displays.push("id" + (i + 1));
         }
-        rest = json.items.length % 6;
+        rest = json.drinks.length % 6;
         ammont = (teiler * 6);
         if (rest > 0) {
             ct = 0;
             html = '<div class="buttons" id="id' + (count + 1) + '"><div class="row r1">';
             if (rest >= 4) {
                 for (i = 0; i < 3; i++) {
-                    html += generateButton(json.items[(ammont + i)].name, json.items[(ammont + i)].id, json.items[(ammont + i)].alcohol);
+                    html += generateButton(json.drinks[(ammont + i)].name, json.drinks[(ammont + i)].id, json.drinks[(ammont + i)].alcohol);
                 }
                 html += '</div><div class="row r2">';
                 ct = 3;
             }
             do {
-                html += generateButton(json.items[(ammont + ct)].name, json.items[(ammont + ct)].id, json.items[(ammont + ct)].alcohol);
+                html += generateButton(json.drinks[(ammont + ct)].name, json.drinks[(ammont + ct)].id, json.drinks[(ammont + ct)].alcohol);
                 ct++;
             } while (ct < rest);
             html += '</div></div>';
             cont.innerHTML += html;
             displays.push("id" + (count + 1));
         }
-    }
-
-    function startup() {
-        generateButtons();
-        for(i = 0; i < displays.length; i++){
-            document.getElementById(displays[i]).style.right = "" + (-i *100 + 10) + "%";
+        for (i = 0; i < displays.length; i++) {
+            document.getElementById(displays[i]).style.right = "" + (-i * 100 + 10) + "%";
         }
         document.addEventListener('keydown', keydown);
     }
 
-    function keydown(e){
-        if(e.code === "ArrowRight" || e.code === "KeyD"){
+    function startup() {
+        if (test) {
+            generateButtons(jsont);
+        } else {
+            setUpMQTT();
+        }
+    }
+
+    function keydown(e) {
+        if (e.code === "ArrowRight" || e.code === "KeyD") {
             right();
-        }else if(e.code === "ArrowLeft" || e.code === "KeyA"){
+        } else if (e.code === "ArrowLeft" || e.code === "KeyA") {
             left();
-        }else if(e.code === "ArrowUp"){
+        } else if (e.code === "ArrowUp") {
             up();
-        }else if(e.code === "ArrowDown"){
+        } else if (e.code === "ArrowDown") {
             down();
-        }else if(e.code === "KeyC"){
-            if(!modalactive)
+        } else if (e.code === "KeyC") {
+            if (!modalactive)
                 updownconf = !updownconf;
         }
     }
 
     function right() {
-        if(modalactive)
-            return;
-        if(displaystate < displays.length - 1){
+        if (modalactive)
+            CloseModal();
+        else if (displaystate < displays.length - 1) {
             displaystate++;
-            for(i = 0; i < displays.length; i++){
+            for (i = 0; i < displays.length; i++) {
                 rg = "" + ((-i + displaystate) * 100 + 10) + "%";
                 document.getElementById(displays[i]).style.right = rg;
             }
@@ -112,20 +142,31 @@
 
     function left() {
         if (modalactive)
-            return;
-        if(displaystate > 0 ){
+            CloseModal();
+        else if (displaystate > 0) {
             displaystate--;
-            for(i = 0; i < displays.length; i++){
-                rg = "" + ((-i + displaystate)*100 + 10) + "%";
+            for (i = 0; i < displays.length; i++) {
+                rg = "" + ((-i + displaystate) * 100 + 10) + "%";
                 document.getElementById(displays[i]).style.right = rg;
             }
         }
     }
 
 
-
 </script>
+<!--
+Hector9000/get_drinks
+Hector9000/get_drinks/return
+
+Hector9000/get_ingredients
+Hector9000/get_ingredients/return
+
+Hector9000/doseDrink
+Hector9000/doseDrink/return
+Hector9000/doseDrink/progress
+-->
 <script>
+    waitingfordrink = false;
     updownconf = true;
     drinkjson = '{' +
         '"name": "%%%",' +
@@ -140,98 +181,153 @@
         ']' +
         '}';
 
-    function DrinkModal(jsons){
-        if(modalactive || processing)
+    function DrinkModal(jsons) {
+        if (modalactive || processing)
             return;
         modalactive = true;
         drk = JSON.parse(jsons);
         document.getElementById("DM_name").innerHTML = "<u>" + drk.name + "</u>";
         document.getElementById("DM_List").innerHTML = "";
-        for(i = 0; i < drk.ingredients.length; i++){
+        for (i = 0; i < drk.ingredients.length; i++) {
             document.getElementById("DM_List").innerHTML += '<div class="DM_ing"><div class="DM_ing_amm">' + drk.ingredients[i].ammount + 'ml</div><div class="DM_ing_name">' + drk.ingredients[i].name + '</div></div>';
         }
         mdl = document.getElementById("DrinkModal");
         mdl.className = "modal open";
-        setTimeout(function a(){        document.getElementById("DM_left").className = "";
-            document.getElementById("DM_right").className = "";   OpenModalBack();     drinkmodal = true;}, 500);
+        setTimeout(function a() {
+            document.getElementById("DM_left").className = "";
+            document.getElementById("DM_right").className = "";
+            OpenModalBack();
+            drinkmodal = true;
+        }, 500);
         //reset process bar
     }
 
-    function OpenModalBack(){
+    function OpenModalBack() {
         document.getElementById("modalclose").className = "";
     }
 
-    function CloseModalBack(){
+    function CloseModalBack() {
         document.getElementById("modalclose").className = "MC_cls";
     }
 
-    function opendrink(button){
-        if(processing || modalactive)
+    function opendrink(button) {
+        if (processing || modalactive)
             return;
-        did = button.getAttribute("d_id");
-        //abfrage
-        DrinkModal(drinkjson.replace("%%%", did));
+        if(testing){
+            DrinkModal(drinkjson);
+            return;
+        }
+        waitingforingredients = true;
+        publish(ingredientstopic, button.getAttribute("d_id"));
     }
 
     function CloseDrinkModal() {
-        if(!drinkmodal || processing)
+        if (!drinkmodal || processing)
             return;
         CloseModalBack();
-        setTimeout(function a(){
-        document.getElementById("DM_left").className = "inv";
-        document.getElementById("DM_right").className = "inv";},200);
+        setTimeout(function a() {
+            document.getElementById("DM_left").className = "inv";
+            document.getElementById("DM_right").className = "inv";
+        }, 200);
         document.getElementById("DrinkModal").className = "modal trans";
-        setTimeout(function b(){document.getElementById("DrinkModal").className = "modal"; modalactive = false; drinkmodal = false;}, 1000);
+        setTimeout(function b() {
+            document.getElementById("DrinkModal").className = "modal";
+            modalactive = false;
+            drinkmodal = false;
+        }, 1000);
     }
 
-    function CloseModal(){
-        if(drinkmodal){
+    function CloseModal() {
+        if (drinkmodal) {
             CloseDrinkModal();
-        }else if(configmodal){
+        } else if (configmodal) {
             CloseConfigModal();
         }
     }
 </script>
 <script>
     function up() {
-        if(updownconf) {
+        if (updownconf) {
             DrinkModal(drinkjson);
-        }else {
+        } else {
             ConfigModal();
         }
     }
 
     function down() {
-        if(updownconf){
+        if (updownconf) {
             CloseDrinkModal();
-        }else{
+        } else {
             CloseConfigModal();
         }
     }
 </script>
 <script>
-    function ConfigModal(){
-        if(modalactive || processing)
+    function ConfigModal() {
+        if (modalactive || processing)
             return;
         modalactive = true;
         document.getElementById("ConfigurationModal").className = "modal open";
-        setTimeout(function d(){document.getElementById("CM_content").className = ""; OpenModalBack();}, 300);
+        setTimeout(function d() {
+            document.getElementById("CM_content").className = "";
+            OpenModalBack();
+        }, 300);
         configmodal = true;
     }
-    function CloseConfigModal(){
-        if(!configmodal || processing)
+
+    function CloseConfigModal() {
+        if (!configmodal || processing)
             return;
         document.getElementById("ConfigurationModal").className = "modal trans";
-        setTimeout(function e(){document.getElementById("CM_content").className = "inv";}, 300);
-        setTimeout(function c(){document.getElementById("ConfigurationModal").className = "modal"; CloseModalBack(); configmodal = false; modalactive = false;}, 1000);
+        setTimeout(function e() {
+            document.getElementById("CM_content").className = "inv";
+        }, 300);
+        setTimeout(function c() {
+            document.getElementById("ConfigurationModal").className = "modal";
+            CloseModalBack();
+            configmodal = false;
+            modalactive = false;
+        }, 1000);
     }
 
     function ConfigModalps() {
-        if(configmodal){
+        if (configmodal) {
             CloseConfigModal();
-        }else{
+        } else {
             ConfigModal();
         }
+    }
+</script>
+<script>
+
+    function publish(topic, payload) {
+        message = new Paho.MQTT.Message(payload);
+        message.destinationName = topic;
+        mqtt.send(message);
+    }
+
+    function messageArrived(msg) {
+        topic = msg.destinationName;
+        if (topic === drinktopic + "/return") {
+            DrinkSubscriber(msg.payloadString);
+        } else if (topic === ingredientstopic + "/return") {
+            IngredientSubscriber(msg.payloadString);
+        }
+    }
+
+    function onConnect() {
+        mqtt.subscribe(drinktopic + "/return");
+        mqtt.subscribe(ingredientstopic + "/return");
+        publish(drinktopic, "true");
+    }
+
+    function setUpMQTT() {
+
+        mqtt = new Paho.MQTT.Client(host, port, "HectorFrontend");
+        var options = {timeout: 3, onSuccess: onConnect,};
+        mqtt.connect(options);
+        mqtt.onMessageArrived = messageArrived;
+
     }
 </script>
 <style>
@@ -239,9 +335,11 @@
         font-family: "hector";
         src: url("Data70.ttf");
     }
-    .inv{
+
+    .inv {
         visibility: hidden;
     }
+
     body {
         width: 100%;
         height: 100%;
@@ -389,7 +487,7 @@
 
 </style>
 <style>
-    .open{
+    .open {
         width: 80% !important;
         height: 80% !important;
         visibility: visible !important;
@@ -397,11 +495,13 @@
         left: calc(10% - 10px) !important;
         opacity: 1 !important;
     }
-    .trans{
+
+    .trans {
         visibility: visible !important;
         opacity: 1 !important;
     }
-    .modal{
+
+    .modal {
         opacity: 0;
         width: 0;
         height: 0;
@@ -414,33 +514,39 @@
         border-radius: 20px;
         transition: width 1s, height 1s, top 1s, left 1s;
     }
-    .modala{
+
+    .modala {
         visibility: hidden;
         display: none;
     }
-    #DM_left{
+
+    #DM_left {
         width: calc(50% - 10px);
         height: 100%;
         margin: auto;
         display: flex;
     }
-    #DM_right{
+
+    #DM_right {
         width: 50%;
         height: 100%;
         margin: auto;
         transition: opacity 1s;
     }
-    #DrinkModal{
+
+    #DrinkModal {
         display: flex;
         flex-direction: row;
     }
-    #DM_description{
+
+    #DM_description {
         height: 60%;
         margin-top: 10%;
         width: 90%;
         margin-left: 5%;
     }
-    #DM_buttons{
+
+    #DM_buttons {
         height: 25%;
         width: 90%;
         margin-top: 4%;
@@ -448,7 +554,8 @@
         display: flex;
         flex-direction: row;
     }
-    .DM_button{
+
+    .DM_button {
         padding: 5%;
         background-color: green;
         border: 3px solid rgba(100, 100, 100, 0.5);
@@ -463,20 +570,24 @@
         -moz-border-radius: 5px;
         border-radius: 5px;
     }
-    .DM_ing{
+
+    .DM_ing {
         margin-left: 5%;
         display: flex;
         flex-direction: row;
         margin-bottom: 4%;
     }
-    .DM_ing_amm{
+
+    .DM_ing_amm {
         margin-right: 15%;
         width: 15%;
     }
-    .DM_ing_name{
+
+    .DM_ing_name {
         text-align: left;
     }
-    #DM_List{
+
+    #DM_List {
         display: flex;
         flex-direction: column;
         font-size: 2.5rem;
@@ -484,31 +595,37 @@
         margin-left: 15%;
         height: 80%;
     }
-    #DM_name{
+
+    #DM_name {
         text-align: center;
         width: 100%;
         font-size: 4rem;
         margin-bottom: 5%;
     }
-    .DM_button > i{
+
+    .DM_button > i {
         margin-right: 20%;
     }
-    #DM_left > i{
+
+    #DM_left > i {
         font-size: 50rem;
         margin: auto;
     }
 </style>
 <style>
-    #ConfigurationModal{
+    #ConfigurationModal {
         display: flex;
     }
-    #ConfigurationModal > div{
+
+    #ConfigurationModal > div {
         margin: auto;
     }
-    .MC_cls{
+
+    .MC_cls {
         display: none;
     }
-    #modalclose{
+
+    #modalclose {
         opacity: 0;
         position: fixed;
         top: 0;
@@ -549,13 +666,16 @@
                 </div>
             </div>
             <div id="DM_buttons">
-                <div class="DM_button" id="DM_abbruch" onclick="CloseDrinkModal()"><i class="far fa-times-circle"></i><span>Abbruch</span></div>
-                <div class="DM_button" id="DM_zubereiten"><i class="fas fa-cocktail"></i></i><span>Zubereiten</span></div>
+                <div class="DM_button" id="DM_abbruch" onclick="CloseDrinkModal()"><i
+                        class="far fa-times-circle"></i><span>Abbruch</span></div>
+                <div class="DM_button" id="DM_zubereiten"><i class="fas fa-cocktail"></i></i><span>Zubereiten</span>
+                </div>
             </div>
         </div>
     </div>
     <div id="ConfigurationModal" class="modal">
-        <div id="CM_content" class="inv"><h1>Configuration</h1><h1 onclick="CloseConfigModal()">Close</h1></div>
+        <div id="CM_content" class="inv"><h1>Configuration</h1>
+            <h1 onclick="CloseConfigModal()">Close</h1></div>
     </div>
     <div id="modalclose" onclick="CloseModal()" class="MC_cls"></div>
 </div>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Hector 9000</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"
-            type="text/javascript"></script>
+    <script src="mqtt.js"></script>
+    <link rel="stylesheet" type="text/css" href="fontawesome/fontawesome.css" />
 </head>
 <body onload="startup()">
 <script>
@@ -17,11 +17,12 @@
     var waitingfordrinks = true;
     var waitingforingredients = false;
     var testing = true;
-    var host = "1.1.1.1";
-    var port = "1234";
+    var host = "localhost";
+    var port = 1883;
     var mqtt;
     var drinktopic = "Hector9000/get_items";
     var ingredientstopic = "Hector9000/get_ingredients";
+    var zubereitentopic = "Hector9000/doseDrink";
 
     function IngredientSubscriber(payload) {
         if (waitingforingredients) {
@@ -106,7 +107,7 @@
     }
 
     function startup() {
-        if (test) {
+        if (testing) {
             generateButtons(jsont);
         } else {
             setUpMQTT();
@@ -152,7 +153,9 @@
         }
     }
 
-
+    function zubereiten(drinkid){
+        publish(zubereitentopic, drinkid);
+    }
 </script>
 <!--
 Hector9000/get_drinks
@@ -169,7 +172,7 @@ Hector9000/doseDrink/progress
     waitingfordrink = false;
     updownconf = true;
     drinkjson = '{' +
-        '"name": "%%%",' +
+        '"name": "Getränk",' +
         '"color": "#999999",' +
         '"description": "Ein Getränk",' +
         '"ingredients": [' +
@@ -322,7 +325,6 @@ Hector9000/doseDrink/progress
     }
 
     function setUpMQTT() {
-
         mqtt = new Paho.MQTT.Client(host, port, "HectorFrontend");
         var options = {timeout: 3, onSuccess: onConnect,};
         mqtt.connect(options);
@@ -394,7 +396,7 @@ Hector9000/doseDrink/progress
         text-align: center;
         width: 100%;
         color: #000;
-        font-size: 2rem;
+        font-size: 6rem;
         margin-top: auto;
         margin-bottom: auto;
         position: relative;
@@ -557,12 +559,12 @@ Hector9000/doseDrink/progress
 
     .DM_button {
         padding: 5%;
+        padding-left: 3%;
         background-color: green;
         border: 3px solid rgba(100, 100, 100, 0.5);
         margin: auto;
         display: flex;
         flex-direction: row;
-        min-width: 30%;
         font-size: 2.5rem;
         color: #F0F0F0;
         text-align: center;
@@ -604,11 +606,12 @@ Hector9000/doseDrink/progress
     }
 
     .DM_button > i {
-        margin-right: 20%;
+        margin-right: 10%;
+        padding-top: 1.5%;
     }
 
     #DM_left > i {
-        font-size: 50rem;
+        font-size: 60vh;
         margin: auto;
     }
 </style>
@@ -634,6 +637,7 @@ Hector9000/doseDrink/progress
         margin: 0;
         height: 100vh;
         width: 100vw;
+        z-index: 99;
     }
 </style>
 <div id="content">
@@ -668,7 +672,7 @@ Hector9000/doseDrink/progress
             <div id="DM_buttons">
                 <div class="DM_button" id="DM_abbruch" onclick="CloseDrinkModal()"><i
                         class="far fa-times-circle"></i><span>Abbruch</span></div>
-                <div class="DM_button" id="DM_zubereiten"><i class="fas fa-cocktail"></i></i><span>Zubereiten</span>
+                <div class="DM_button" id="DM_zubereiten" onclick="zubereiten()"><i class="fas fa-cocktail"></i></i><span>Zubereiten</span>
                 </div>
             </div>
         </div>

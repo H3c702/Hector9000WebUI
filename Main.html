@@ -13,14 +13,18 @@
     var displaystate = 0;
     var modalactive = false;
     var drinkmodal = false;
+    var drinkloadingmodal = false;
     var configmodal = false;
     var processing = false;
     var waitingfordrinks = true;
     var waitingforingredients = false;
-    var testing = false;
+    var waitingingredientid = "";
+    var testingmain = true;
+    var testingdrinks = true;
     var host = "localhost";
     var port = 9001;
     var mqtt;
+    var DM_isopening = false;
     var drinktopic = "Hector9000/get_items";
     var ingredientstopic = "Hector9000/get_ingredients";
     var zubereitentopic = "Hector9000/doseDrink";
@@ -96,10 +100,11 @@
             document.getElementById(displays[i]).style.right = "" + (-i * 100 + 10) + "%";
         }
         document.addEventListener('keydown', keydown);
+        document.getElementById("loading").className = "inv";
     }
 
     function startup() {
-        if (testing) {
+        if (testingmain) {
             generateButtons(jsont);
         } else {
             setUpMQTT();
@@ -113,12 +118,15 @@
     function opendrink(button) {
         if (processing || modalactive)
             return;
-        if (testing) {
-            DrinkModal(drinkjson);
-            return;
+        if (testingdrinks) {
+            loadingDrinkModal();
+            setTimeout(DrinkModal(drinkjson), 500);
+        } else {
+            loadingDrinkModal();
+            waitingforingredients = true;
+            waitingingredientid = button.getAttribute("d_id");
+            publish(ingredientstopic, button.getAttribute("d_id"));
         }
-        waitingforingredients = true;
-        publish(ingredientstopic, button.getAttribute("d_id"));
     }
 </script>
 <!-- Keyevents -->
@@ -180,31 +188,53 @@
 </script>
 <!-- Modal open and close -->
 <script>
-    function DrinkModal(jsons) {
-        if (modalactive || processing)
+
+    function loadingDrinkModal() {
+        if (modalactive)
             return;
+        DM_isopening = true;
         modalactive = true;
+        drinkloadingmodal = true;
+        document.getElementById("DrinkModal").className = "modal open";
+        setTimeout(function a() {
+            document.getElementById("DM_loading_inner").className = "";
+            OpenModalBack();
+            DM_isopening = false;
+        }, 500);
+    }
+
+    function DrinkModal(jsons) {
+        if (!drinkloadingmodal)
+            return;
+        if (DM_isopening) {
+            setTimeout(DrinkModal(jsons), 500);
+            return;
+        }
         drk = JSON.parse(jsons);
+        if(waitingingredientid !== drk.id){
+            return;
+        }
         document.getElementById("DM_name").innerHTML = "<u>" + drk.name + "</u>";
         document.getElementById("DM_List").innerHTML = "";
         for (i = 0; i < drk.ingredients.length; i++) {
             document.getElementById("DM_List").innerHTML += '<div class="DM_ing"><div class="DM_ing_amm">' + drk.ingredients[i].ammount + 'ml</div><div class="DM_ing_name">' + drk.ingredients[i].name + '</div></div>';
         }
         document.getElementById("DM_zubereiten").onclick = "zubereiten(" + drk.id + ")";
-        mdl = document.getElementById("DrinkModal");
-        mdl.className = "modal open";
-        setTimeout(function a() {
-            document.getElementById("DM_left").className = "";
-            document.getElementById("DM_right").className = "";
-            OpenModalBack();
-            drinkmodal = true;
-        }, 500);
-        //reset process bar
+        document.getElementById("DM_left").className = "";
+        document.getElementById("DM_right").className = "";
+        document.getElementById("DM_loading").className = "inv";
+        document.getElementById("DM_loading_inner").className = "inv";
+        drinkmodal = true;
     }
 
     function CloseDrinkModal() {
-        if (!drinkmodal || processing)
+        if (!drinkmodal && !drinkloadingmodal)
             return;
+        if(drinkloadingmodal){
+            waitingingredientid = "";
+            waitingforingredients = false;
+            document.getElementById("DM_loading_inner").className = "inv";
+        }
         CloseModalBack();
         setTimeout(function a() {
             document.getElementById("DM_left").className = "inv";
@@ -215,6 +245,7 @@
             document.getElementById("DrinkModal").className = "modal";
             modalactive = false;
             drinkmodal = false;
+            document.getElementById("DM_loading").className = "";
         }, 1000);
     }
 
@@ -254,7 +285,7 @@
     }
 
     function CloseModal() {
-        if (drinkmodal) {
+        if (drinkmodal || drinkloadingmodal) {
             CloseDrinkModal();
         } else if (configmodal) {
             CloseConfigModal();
@@ -472,6 +503,10 @@
 
 </style>
 <style>
+    .fas-s {
+        font-size: 35vh !important;
+    }
+
     .open {
         width: 80% !important;
         height: 80% !important;
@@ -597,6 +632,22 @@
         font-size: 60vh;
         margin: auto;
     }
+
+    #DM_loading {
+        z-index: 101;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+    }
+
+    #DM_loading > div {
+        font-size: 4vh;
+        text-align: center;
+        margin: auto;
+    }
 </style>
 <style>
     #ConfigurationModal {
@@ -623,6 +674,154 @@
         z-index: 99;
     }
 </style>
+<!-- Loading animation -->
+<style>
+    .lds-roller {
+        display: inline-block;
+        position: relative;
+        width: 64px;
+        height: 64px;
+    }
+
+    .lds-roller div {
+        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        transform-origin: 32px 32px;
+    }
+
+    .lds-roller div:after {
+        content: " ";
+        display: block;
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #fff;
+        margin: -3px 0 0 -3px;
+    }
+
+    .lds-roller div:nth-child(1) {
+        animation-delay: -0.036s;
+    }
+
+    .lds-roller div:nth-child(1):after {
+        top: 50px;
+        left: 50px;
+    }
+
+    .lds-roller div:nth-child(2) {
+        animation-delay: -0.072s;
+    }
+
+    .lds-roller div:nth-child(2):after {
+        top: 54px;
+        left: 45px;
+    }
+
+    .lds-roller div:nth-child(3) {
+        animation-delay: -0.108s;
+    }
+
+    .lds-roller div:nth-child(3):after {
+        top: 57px;
+        left: 39px;
+    }
+
+    .lds-roller div:nth-child(4) {
+        animation-delay: -0.144s;
+    }
+
+    .lds-roller div:nth-child(4):after {
+        top: 58px;
+        left: 32px;
+    }
+
+    .lds-roller div:nth-child(5) {
+        animation-delay: -0.18s;
+    }
+
+    .lds-roller div:nth-child(5):after {
+        top: 57px;
+        left: 25px;
+    }
+
+    .lds-roller div:nth-child(6) {
+        animation-delay: -0.216s;
+    }
+
+    .lds-roller div:nth-child(6):after {
+        top: 54px;
+        left: 19px;
+    }
+
+    .lds-roller div:nth-child(7) {
+        animation-delay: -0.252s;
+    }
+
+    .lds-roller div:nth-child(7):after {
+        top: 50px;
+        left: 14px;
+    }
+
+    .lds-roller div:nth-child(8) {
+        animation-delay: -0.288s;
+    }
+
+    .lds-roller div:nth-child(8):after {
+        top: 45px;
+        left: 10px;
+    }
+
+    @keyframes lds-roller {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+</style>
+<!-- Loading Style -->
+<style>
+    #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000;
+        display: flex;
+        flex-direction: row;
+        background-color: black;
+    }
+
+    #loading > div {
+        font-size: 4vh;
+        text-align: center;
+        margin: auto;
+    }
+
+    .inv {
+        visibility: hidden;
+    }
+</style>
+<div id="loading">
+    <div>
+        <div style="margin-bottom: 2vh">Loading Drinks</div>
+        <div>
+            <div class="lds-roller">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="content">
     <div id="header">
         <div id="title">
@@ -643,6 +842,23 @@
         </div>
     </div>
     <div id="DrinkModal" class="modal">
+        <div id="DM_loading">
+            <div id="DM_loading_inner" class="inv">
+                <div style="margin-bottom: 2vh;">Loading Drink Info</div>
+                <div>
+                    <div class="lds-roller">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="DM_left" class="inv">
             <i class="fas fa-glass-whiskey"></i>
         </div>
@@ -667,8 +883,6 @@
     </div>
     <div id="modalclose" onclick="CloseModal()" class="MC_cls"></div>
 </div>
-<div id="loading">
 
-</div>
 </body>
 </html>

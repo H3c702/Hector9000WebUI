@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Hector 9000</title>
-    <script src="mqtt.js"></script>
-    <link rel="stylesheet" type="text/css" href="fontawesome/fontawesome.css" />
+    <script type="text/javascript" src="mqtt.js"></script>
+    <link rel="stylesheet" type="text/css" href="fontawesome/fontawesome.css"/>
 </head>
 <body onload="startup()">
+<!-- global Vairables (Config) -->
 <script>
     var displays = [];
     var displaystate = 0;
@@ -16,39 +17,30 @@
     var processing = false;
     var waitingfordrinks = true;
     var waitingforingredients = false;
-    var testing = true;
+    var testing = false;
     var host = "localhost";
-    var port = 1883;
+    var port = 9001;
     var mqtt;
     var drinktopic = "Hector9000/get_items";
     var ingredientstopic = "Hector9000/get_ingredients";
     var zubereitentopic = "Hector9000/doseDrink";
-
-    function IngredientSubscriber(payload) {
-        if (waitingforingredients) {
-            waitingforingredients = false;
-            DrinkModal(payload);
-        }
-    }
-
-    function DrinkSubscriber(payload) {
-        if (waitingfordrinks) {
-            generateButtons(payload);
-            waitingfordrinks = false;
-        }
-    }
-
-    //umbenennen in drinks -> items
-    var jsont = '{"drinks": [' +
-        '{"name": "bla1","id": 123, "alcohol": true},' +
-        '{"name": "bla2","id": 123, "alcohol": false},' +
-        '{"name": "bla3","id": 123, "alcohol": false},' +
-        '{"name": "bla4","id": 123, "alcohol": false},' +
-        '{"name": "bla5","id": 123, "alcohol": true},' +
-        '{"name": "bla6","id": 123, "alcohol": true},' +
-        '{"name": "bla7","id": 123, "alcohol": false}' +
+    waitingfordrink = false;
+    updownconf = true;
+    drinkjson = '{ "id": "testid", "name": "Getränk","color": "#999999",' +
+        '"description": "Ein Getränk",' +
+        '"ingredients": [' +
+        '{"name": "Cola", "ammount": 150},' +
+        '{"name": "Club-Mate", "ammount": 100},' +
+        '{"name": "Rum", "ammount": 50},' +
+        '{"name": "Wasser", "ammount": 200},' +
+        '{"name": "O-Saft", "ammount": 10}' +
         ']' +
         '}';
+    var jsont = '{"drinks": [{"name": "bla1","id": 123, "alcohol": true},{"name": "bla2","id": 123, "alcohol": false},{"name": "bla3","id": 123, "alcohol": false},{"name": "bla4","id": 123, "alcohol": false},{"name": "bla5","id": 123, "alcohol": true},{"name": "bla6","id": 123, "alcohol": true},{"name": "bla7","id": 123, "alcohol": false}]}';
+
+</script>
+<!-- Different Methods -->
+<script>
 
     function generateButton(name, id, alc) {
         shtml = '<div onclick="opendrink(this)" class="button ';
@@ -114,6 +106,23 @@
         }
     }
 
+    function zubereiten(drinkid) {
+        publish(zubereitentopic, drinkid);
+    }
+
+    function opendrink(button) {
+        if (processing || modalactive)
+            return;
+        if (testing) {
+            DrinkModal(drinkjson);
+            return;
+        }
+        waitingforingredients = true;
+        publish(ingredientstopic, button.getAttribute("d_id"));
+    }
+</script>
+<!-- Keyevents -->
+<script>
     function keydown(e) {
         if (e.code === "ArrowRight" || e.code === "KeyD") {
             right();
@@ -153,37 +162,24 @@
         }
     }
 
-    function zubereiten(drinkid){
-        publish(zubereitentopic, drinkid);
+    function up() {
+        if (updownconf) {
+            DrinkModal(drinkjson);
+        } else {
+            ConfigModal();
+        }
+    }
+
+    function down() {
+        if (updownconf) {
+            CloseDrinkModal();
+        } else {
+            CloseConfigModal();
+        }
     }
 </script>
-<!--
-Hector9000/get_drinks
-Hector9000/get_drinks/return
-
-Hector9000/get_ingredients
-Hector9000/get_ingredients/return
-
-Hector9000/doseDrink
-Hector9000/doseDrink/return
-Hector9000/doseDrink/progress
--->
+<!-- Modal open and close -->
 <script>
-    waitingfordrink = false;
-    updownconf = true;
-    drinkjson = '{' +
-        '"name": "Getränk",' +
-        '"color": "#999999",' +
-        '"description": "Ein Getränk",' +
-        '"ingredients": [' +
-        '{"name": "Cola", "ammount": 150},' +
-        '{"name": "Club-Mate", "ammount": 100},' +
-        '{"name": "Rum", "ammount": 50},' +
-        '{"name": "Wasser", "ammount": 200},' +
-        '{"name": "O-Saft", "ammount": 10}' +
-        ']' +
-        '}';
-
     function DrinkModal(jsons) {
         if (modalactive || processing)
             return;
@@ -194,6 +190,7 @@ Hector9000/doseDrink/progress
         for (i = 0; i < drk.ingredients.length; i++) {
             document.getElementById("DM_List").innerHTML += '<div class="DM_ing"><div class="DM_ing_amm">' + drk.ingredients[i].ammount + 'ml</div><div class="DM_ing_name">' + drk.ingredients[i].name + '</div></div>';
         }
+        document.getElementById("DM_zubereiten").onclick = "zubereiten(" + drk.id + ")";
         mdl = document.getElementById("DrinkModal");
         mdl.className = "modal open";
         setTimeout(function a() {
@@ -203,25 +200,6 @@ Hector9000/doseDrink/progress
             drinkmodal = true;
         }, 500);
         //reset process bar
-    }
-
-    function OpenModalBack() {
-        document.getElementById("modalclose").className = "";
-    }
-
-    function CloseModalBack() {
-        document.getElementById("modalclose").className = "MC_cls";
-    }
-
-    function opendrink(button) {
-        if (processing || modalactive)
-            return;
-        if(testing){
-            DrinkModal(drinkjson);
-            return;
-        }
-        waitingforingredients = true;
-        publish(ingredientstopic, button.getAttribute("d_id"));
     }
 
     function CloseDrinkModal() {
@@ -240,32 +218,6 @@ Hector9000/doseDrink/progress
         }, 1000);
     }
 
-    function CloseModal() {
-        if (drinkmodal) {
-            CloseDrinkModal();
-        } else if (configmodal) {
-            CloseConfigModal();
-        }
-    }
-</script>
-<script>
-    function up() {
-        if (updownconf) {
-            DrinkModal(drinkjson);
-        } else {
-            ConfigModal();
-        }
-    }
-
-    function down() {
-        if (updownconf) {
-            CloseDrinkModal();
-        } else {
-            CloseConfigModal();
-        }
-    }
-</script>
-<script>
     function ConfigModal() {
         if (modalactive || processing)
             return;
@@ -300,8 +252,39 @@ Hector9000/doseDrink/progress
             ConfigModal();
         }
     }
+
+    function CloseModal() {
+        if (drinkmodal) {
+            CloseDrinkModal();
+        } else if (configmodal) {
+            CloseConfigModal();
+        }
+    }
+
+    function OpenModalBack() {
+        document.getElementById("modalclose").className = "";
+    }
+
+    function CloseModalBack() {
+        document.getElementById("modalclose").className = "MC_cls";
+    }
 </script>
+<!-- MQTT -->
 <script>
+
+    function IngredientSubscriber(payload) {
+        if (waitingforingredients) {
+            waitingforingredients = false;
+            DrinkModal(payload);
+        }
+    }
+
+    function DrinkSubscriber(payload) {
+        if (waitingfordrinks) {
+            generateButtons(payload);
+            waitingfordrinks = false;
+        }
+    }
 
     function publish(topic, payload) {
         message = new Paho.MQTT.Message(payload);
@@ -565,7 +548,7 @@ Hector9000/doseDrink/progress
         margin: auto;
         display: flex;
         flex-direction: row;
-        font-size: 2.5rem;
+        font-size: 4vh;
         color: #F0F0F0;
         text-align: center;
         -webkit-border-radius: 5px;
@@ -592,7 +575,7 @@ Hector9000/doseDrink/progress
     #DM_List {
         display: flex;
         flex-direction: column;
-        font-size: 2.5rem;
+        font-size: 4vh;
         width: 80%;
         margin-left: 15%;
         height: 80%;
@@ -601,7 +584,7 @@ Hector9000/doseDrink/progress
     #DM_name {
         text-align: center;
         width: 100%;
-        font-size: 4rem;
+        font-size: 5vh;
         margin-bottom: 5%;
     }
 
@@ -672,7 +655,8 @@ Hector9000/doseDrink/progress
             <div id="DM_buttons">
                 <div class="DM_button" id="DM_abbruch" onclick="CloseDrinkModal()"><i
                         class="far fa-times-circle"></i><span>Abbruch</span></div>
-                <div class="DM_button" id="DM_zubereiten" onclick="zubereiten()"><i class="fas fa-cocktail"></i></i><span>Zubereiten</span>
+                <div class="DM_button" id="DM_zubereiten" onclick="zubereiten()"><i class="fas fa-cocktail"></i></i>
+                    <span>Zubereiten</span>
                 </div>
             </div>
         </div>
@@ -682,6 +666,9 @@ Hector9000/doseDrink/progress
             <h1 onclick="CloseConfigModal()">Close</h1></div>
     </div>
     <div id="modalclose" onclick="CloseModal()" class="MC_cls"></div>
+</div>
+<div id="loading">
+
 </div>
 </body>
 </html>

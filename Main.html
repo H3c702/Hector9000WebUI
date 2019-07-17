@@ -25,9 +25,9 @@
     var port = 9001;
     var mqtt;
     var DM_isopening = false;
-    var drinktopic = "Hector9000/get_items";
+    var drinktopic = "Hector9000/get_drinks";
     var ingredientstopic = "Hector9000/get_ingredients";
-    var zubereitentopic = "Hector9000/doseDrink";
+    var zubereitentopic = "Hector9000/dose_Drink";
     waitingfordrink = false;
     updownconf = true;
     drinkjson = '{ "id": "testid", "name": "Getränk","color": "#999999",' +
@@ -118,7 +118,7 @@
     function opendrink(button) {
         if (processing || modalactive)
             return;
-        if (testingdrinks) {
+        if (testingdrinks || testingmain) {
             loadingDrinkModal();
             setTimeout(DrinkModal(drinkjson), 500);
         } else {
@@ -155,6 +155,12 @@
                 rg = "" + ((-i + displaystate) * 100 + 10) + "%";
                 document.getElementById(displays[i]).style.right = rg;
             }
+        }else if(displaystate === displays.length - 1){
+            displaystate = 0;
+            for (i = 0; i < displays.length; i++) {
+                rg = "" + ((-i + displaystate) * 100 + 10) + "%";
+                document.getElementById(displays[i]).style.right = rg;
+            }
         }
     }
 
@@ -163,6 +169,12 @@
             CloseModal();
         else if (displaystate > 0) {
             displaystate--;
+            for (i = 0; i < displays.length; i++) {
+                rg = "" + ((-i + displaystate) * 100 + 10) + "%";
+                document.getElementById(displays[i]).style.right = rg;
+            }
+        }else if(displaystate === 0){
+            displaystate = displays.length - 1;
             for (i = 0; i < displays.length; i++) {
                 rg = "" + ((-i + displaystate) * 100 + 10) + "%";
                 document.getElementById(displays[i]).style.right = rg;
@@ -341,9 +353,8 @@
     function setUpMQTT() {
         mqtt = new Paho.MQTT.Client(host, port, "HectorFrontend");
         var options = {timeout: 3, onSuccess: onConnect,};
-        mqtt.connect(options);
         mqtt.onMessageArrived = messageArrived;
-
+        mqtt.connect(options);
     }
 </script>
 <style>

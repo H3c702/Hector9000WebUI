@@ -19,13 +19,13 @@
     var waitingfordrinks = true;
     var waitingforingredients = false;
     var waitingingredientid = "";
-    var testingmain = true;
+    var testingmain = false;
     var testingdrinks = true;
     var host = "localhost";
     var port = 9001;
     var mqtt;
     var DM_isopening = false;
-    var drinktopic = "Hector9000/get_items";
+    var drinktopic = "Hector9000/get_drinks";
     var ingredientstopic = "Hector9000/get_ingredients";
     var zubereitentopic = "Hector9000/doseDrink";
     waitingfordrink = false;
@@ -341,8 +341,9 @@
     function setUpMQTT() {
         mqtt = new Paho.MQTT.Client(host, port, "HectorFrontend");
         var options = {timeout: 3, onSuccess: onConnect,};
-        mqtt.connect(options);
+        
         mqtt.onMessageArrived = messageArrived;
+        mqtt.connect(options);
 
     }
 </script>

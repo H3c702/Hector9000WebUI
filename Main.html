@@ -208,7 +208,7 @@
         modalactive = true;
         drinkloadingmodal = true;
         document.getElementById("DrinkModal").className = "modal open";
-        setTimeout(ModalIsOpened(), 1000);
+        setTimeout(ModalIsOpened(), 4000);
     }
 
     function ModalIsOpened(){
@@ -225,7 +225,7 @@
             return;
         }
         drk = JSON.parse(jsons);
-        if(waitingingredientid !== drk.id){
+        if(waitingingredientid != drk.id){
             return;
         }
         document.getElementById("DM_name").innerHTML = "<u>" + drk.name + "</u>";

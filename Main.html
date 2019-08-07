@@ -120,7 +120,8 @@
             return;
         if (testingdrinks || testingmain) {
             loadingDrinkModal();
-            setTimeout(DrinkModal(drinkjson), 500);
+            console.log("tesing...")
+            setTimeout( function(){DrinkModal(drinkjson);}, 500);
         } else {
             loadingDrinkModal();
             waitingforingredients = true;
@@ -208,7 +209,7 @@
         modalactive = true;
         drinkloadingmodal = true;
         document.getElementById("DrinkModal").className = "modal open";
-        setTimeout(ModalIsOpened(), 4000);
+        setTimeout(function() { ModalIsOpened(); }, 1100);
     }
 
     function ModalIsOpened(){
@@ -218,14 +219,16 @@
     }
 
     function DrinkModal(jsons) {
-        if (!drinkloadingmodal)
+        if (!drinkloadingmodal){
             return;
+        }
         if (DM_isopening) {
-            setTimeout(DrinkModal(jsons), 500);
+            console.log("repeat");
+            setTimeout(function(){DrinkModal(jsons);}, 1500);
             return;
         }
         drk = JSON.parse(jsons);
-        if(waitingingredientid != drk.id){
+        if(waitingingredientid.toString() !== drk.id.toString() && !(testingdrinks || testingmain)){
             return;
         }
         document.getElementById("DM_name").innerHTML = "<u>" + drk.name + "</u>";
@@ -250,12 +253,12 @@
             document.getElementById("DM_loading_inner").className = "inv";
         }
         CloseModalBack();
-        setTimeout(function a() {
+        setTimeout(function() {
             document.getElementById("DM_left").className = "inv";
             document.getElementById("DM_right").className = "inv";
         }, 200);
         document.getElementById("DrinkModal").className = "modal trans";
-        setTimeout(function b() {
+        setTimeout(function() {
             document.getElementById("DrinkModal").className = "modal";
             modalactive = false;
             drinkmodal = false;
@@ -268,7 +271,7 @@
             return;
         modalactive = true;
         document.getElementById("ConfigurationModal").className = "modal open";
-        setTimeout(function d() {
+        setTimeout(function() {
             document.getElementById("CM_content").className = "";
             OpenModalBack();
         }, 300);
@@ -279,10 +282,10 @@
         if (!configmodal || processing)
             return;
         document.getElementById("ConfigurationModal").className = "modal trans";
-        setTimeout(function e() {
+        setTimeout(function() {
             document.getElementById("CM_content").className = "inv";
         }, 300);
-        setTimeout(function c() {
+        setTimeout(function() {
             document.getElementById("ConfigurationModal").className = "modal";
             CloseModalBack();
             configmodal = false;

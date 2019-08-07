@@ -208,11 +208,13 @@
         modalactive = true;
         drinkloadingmodal = true;
         document.getElementById("DrinkModal").className = "modal open";
-        setTimeout(function a() {
-            document.getElementById("DM_loading_inner").className = "";
-            OpenModalBack();
-            DM_isopening = false;
-        }, 500);
+        setTimeout(ModalIsOpened(), 1000);
+    }
+
+    function ModalIsOpened(){
+        document.getElementById("DM_loading_inner").className = "";
+        OpenModalBack();
+        DM_isopening = false;
     }
 
     function DrinkModal(jsons) {

@@ -228,8 +228,11 @@
             return;
         }
         drk = JSON.parse(jsons);
-        if(waitingingredientid.toString() !== drk.id.toString() && !(testingdrinks || testingmain)){
-            return;
+        if(!(testingdrinks || testingmain)){
+            if(waitingingredientid.toString() !== drk.id.toString())
+            {
+                return;
+            }
         }
         document.getElementById("DM_name").innerHTML = "<u>" + drk.name + "</u>";
         document.getElementById("DM_List").innerHTML = "";

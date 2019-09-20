@@ -13,6 +13,8 @@
     var displaystate = 0;
     var modalactive = false;
     var drinkmodal = false;
+    var waitingforprocessingconfirmation = false;
+    var waitingfordrink = false;
     var drinkloadingmodal = false;
     var configmodal = false;
     var processing = false;
@@ -112,7 +114,11 @@
     }
 
     function zubereiten(drinkid) {
-        publish(zubereitentopic, drinkid);
+        if(!waitingforprocessingconfirmation){
+            publish(zubereitentopic, drinkid);
+            waitingforprocessingconfirmation = true;
+            waitingforconfirmation(true);
+        }
     }
 
     function opendrink(button) {
@@ -120,7 +126,7 @@
             return;
         if (testingdrinks || testingmain) {
             loadingDrinkModal();
-            console.log("tesing...")
+            console.log("tesing...");
             setTimeout( function(){DrinkModal(drinkjson);}, 500);
         } else {
             loadingDrinkModal();
@@ -201,6 +207,27 @@
 </script>
 <!-- Modal open and close -->
 <script>
+
+    function waitingforconfirmation(disable){
+        if(disable){
+            //ToDo: Show loading on "zubereiten" button
+            //ToDo: disable Modal close
+        }else{
+            //ToDo: remove loading on "zubereiten" button
+            //ToDo: enable Modal close
+        }
+    }
+
+    function waitingfordrinkmodal(isstart){
+        if (isstart){
+            //ToDo: close drink modal
+
+            //ToDo: Loading (Waiting for Drink animation) (Modal)
+        }else{
+            //ToDo: end waitingfordrink animation (Close Modal)
+        }
+    }
+
 
     function loadingDrinkModal() {
         if (modalactive)
@@ -337,6 +364,24 @@
         }
     }
 
+    function ProcessSubscriber(payload){
+        let start = "conf";
+        let end = "fin";
+        if (payload === start){
+            if(waitingforprocessingconfirmation){
+                waitingforprocessingconfirmation = false;
+                waitingforconfirmation(false);
+                waitingfordrink = true;
+                waitingfordrinkmodal(true);
+            }
+        }else if (payload === end){
+            if(waitingfordrink){
+                waitingfordrinkmodal(false);
+                waitingfordrink = false;
+            }
+        }
+    }
+
     function publish(topic, payload) {
         message = new Paho.MQTT.Message(payload);
         message.destinationName = topic;
@@ -349,12 +394,15 @@
             DrinkSubscriber(msg.payloadString);
         } else if (topic === ingredientstopic + "/return") {
             IngredientSubscriber(msg.payloadString);
+        } else if (topic === zubereitentopic + "/return"){
+            ProcessSubscriber(msg.payloadString);
         }
     }
 
     function onConnect() {
         mqtt.subscribe(drinktopic + "/return");
         mqtt.subscribe(ingredientstopic + "/return");
+        mqtt.subscribe(zubereitentopic + "/return");
         publish(drinktopic, "true");
     }
 

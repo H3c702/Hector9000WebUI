@@ -318,9 +318,7 @@
                 document.getElementById("DM_zubereiten").className = "DM_button inv";
                 document.getElementById("DM_abbruch").className = "DM_button inv";
                 document.getElementById("DM_dose_bar").className = "";
-		console.log("next");
-		updateDosingState(5);
-        	document.getElementById("DM_zubereiten_loading").className = "inv";
+        	    document.getElementById("DM_zubereiten_loading").className = "inv";
 	    }, 500)}
 	   // setTimeout(function(){doseEnded();}, 45000);
     }
@@ -328,8 +326,8 @@
     function updateDosingState(update) {
 	    console.log("update " + update); 
         if (DM_status === DM_State.DOSING){
-		console.log("true");
             let inner = document.getElementById("inner_bar");
+            update = update.split(".")[0];
             inner.style.width = update + "%";
             inner.getElementsByTagName("div")[0].innerText = update + "%";
         }
@@ -430,18 +428,12 @@
     }
 
     function DrinkProcessSubscriber(payload) {
-	args = payload.split(",");
-	if(args[0] != document.getElementById("mod-drink").getAttribute("d_id")){
-		console.log("id not equal in process subscriber");
-		return;
-	}
-	payload = args[1];	
-        if (DM_status === DM_State.DOSING) {
-                if (payload == "end" || payload.startsWith("100")) {
-                    doseEnded();
-                } else {
-                    updateDosingState(payload);
-                }
+    if (DM_status === DM_State.DOSING) {
+            if (payload == "end" || payload.startsWith("100")) {
+                doseEnded();
+            } else {
+                updateDosingState(payload);
+            }
         }
     }
 

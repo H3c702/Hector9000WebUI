@@ -1,27 +1,26 @@
 ## **Hector9000WEBUI**
 
-#### Usage:
+### Usage:
 
-**For Testing without MQTT-Server:**
+This frontend is tested and optimized only on a 800x480 Chromium browser. There could occur problems in other browsers / screen sizes.
 
-Set JS-Variables:  
+#### For Testing without MQTT-Server:
+
+Set JS-Variable:  
 ```javascript
-testingmain = true;
-testingdrinks = true;
+var testing = true;
 ```
 
-* Setting the `testingmain` variable disables the mqtt connection
-completely and only uses locally stored testing data 
-
-* Setting the `testingdrinks` variable only disables the mqtt usage for
-getting the drinks ingredients and uses locally stored data
-
-**For Production/Testing with MQTT-Server:**
+#### For Production/Testing with MQTT-Server:
 ```javascript
-testingmain = false;
-testingdrinks = false;
-host = %HOSTNAME%;
-port = %PORTNUMBER%;
+var testing = false;
+var host = %HOSTNAME%;
+var port = %PORTNUMBER%;
 ```
 Make sure your MQTT-Server has Websocket support and set the 
-port to the websocket port of your MQTT-Server
+port to the websocket port of your MQTT-Server. To add Websocket support to mosquitto add:
+
+    listener %PORTNUMBER%
+    protocol websockets
+
+to your mosquitto config file.

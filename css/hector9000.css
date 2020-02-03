@@ -1,0 +1,562 @@
+.dis {
+    opacity: 1;
+}
+
+#inner_bar {
+    transition: width 500ms;
+    height: 100%;
+    background-color: green;
+    display: flex;
+}
+
+#inner_bar > div {
+    margin: auto;
+}
+
+#outter_bar {
+    height: 40px;
+    width: 100%;
+    background-color: grey;
+}
+
+#DM_dose_bar {
+    height: 50px;
+    width: 90%;
+    margin-left: 5%;
+    margin-top: auto;
+    margin-bottom: auto;
+    transition: opacity 500ms;
+}
+
+.DM_button {
+    transition: opacity 500ms;
+}
+.fas-s {
+    font-size: 35vh !important;
+}
+
+.open {
+    width: 80% !important;
+    height: 80% !important;
+    visibility: visible !important;
+    top: 15% !important;
+    left: calc(10% - 10px) !important;
+    opacity: 1 !important;
+}
+
+.trans {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.modal {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    z-index: 100;
+    background-color: #2a2a2a;
+    border: 10px solid grey;
+    border-radius: 20px;
+    transition: width 1s, height 1s, top 1s, left 1s;
+}
+
+.modala {
+    visibility: hidden;
+    display: none;
+}
+
+#DM_left {
+    width: calc(50% - 10px);
+    height: 100%;
+    margin: auto;
+    display: flex;
+}
+
+#DM_right {
+    width: 50%;
+    height: 100%;
+    margin: auto;
+    transition: opacity 1s;
+}
+
+#DrinkModal {
+    display: flex;
+    flex-direction: row;
+}
+
+#DM_description {
+    height: 60%;
+    margin-top: 4%;
+    width: 90%;
+    margin-left: 5%;
+}
+
+#DM_ing_loader {
+    margin: auto;
+    position: relative;
+    right: 6%;
+}
+
+#DM_zubereiten_mover {
+    transition-property: left;
+    transition-delay: 0ms;
+    transition-duration: 200ms;
+    margin-bottom: auto;
+    margin-top: auto;
+    position: relative;
+    left: 15%;
+}
+
+#DM_buttons {
+    height: 25%;
+    width: 90%;
+    margin-top: 4%;
+    margin-left: 5%;
+    display: flex;
+    flex-direction: row;
+    transition: opacity 500ms;
+}
+
+#DM_abbruch {
+    background-color: red;
+    position: relative;
+    right: 15px;
+}
+
+#DM_zubereiten {
+    display: flex;
+    flex-direction: row;
+    width: 45%;
+    text-align: left !important;
+}
+
+#DM_zubereiten_loading {
+    position: relative;
+    left: 100px;
+}
+
+#DM_zubereiten_inner {
+    display: flex;
+    flex-direction: row;
+    margin-top: auto;
+    margin-bottom: auto;
+
+}
+
+.DM_button {
+    padding: 3%;
+    background-color: green;
+    border: 3px solid rgba(100, 100, 100, 0.5);
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    font-size: 4vh;
+    color: #F0F0F0;
+    text-align: center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.DM_ing {
+    margin-left: 5%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: auto;
+}
+
+.DM_ing_amm {
+    margin-right: 15%;
+    width: 15%;
+}
+
+.DM_ing_name {
+    text-align: left;
+}
+
+#DM_List {
+    display: flex;
+    flex-direction: column;
+    font-size: 4vh;
+    width: 80%;
+    margin-left: 15%;
+    height: 80%;
+}
+
+#DM_name {
+    text-align: center;
+    width: 100%;
+    font-size: 5vh;
+    margin-bottom: 5%;
+}
+
+.DM_button > i {
+    margin-right: 10%;
+    padding-top: 1.5%;
+}
+
+#DM_left > i {
+    font-size: 60vh;
+    margin: auto;
+}
+#CM_content {
+    margin: auto;
+    height: 90%;
+    width: 90%;
+}
+
+#CM_content > h1{
+    text-align: center;
+}
+
+#CM_content > div {
+    margin: auto;
+}
+
+#ConfigurationModal > div {
+    margin: auto;
+}
+
+.MC_cls {
+    display: none;
+}
+
+#modalclose {
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: 99;
+}
+
+@font-face {
+    font-family: "hector";
+    src: url("Data70.ttf");
+}
+
+.inv {
+    visibility: collapse !important;
+    display: none !important;
+}
+
+#mod-config {
+    display: flex;
+    height: 100%;
+}
+
+#mod-drink {
+    height: 100%;
+}
+
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: #FFFFFF;
+}
+
+.fas-s {
+    font-size: 5rem;
+}
+
+.side-but {
+    background-color: grey;
+    padding-right: 5px;
+    padding-left: 5px;
+    border-radius: 5px
+}
+
+#content {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.row {
+    height: 40%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+
+}
+
+.button {
+    background-color: green;
+    width: 28%;
+    margin-right: auto;
+    margin-left: auto;
+    height: 90%;
+    display: flex;
+}
+
+.alc {
+    background-color: red !important;
+}
+
+.loader_active {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+.name {
+    margin: auto;
+    text-align: center;
+    width: 100%;
+    color: #000;
+    font-size: 3rem;
+    margin-top: auto;
+    margin-bottom: auto;
+    position: relative;
+    top: -3%;
+}
+
+.buttons {
+    width: 80%;
+    height: 90%;
+    overflow-y: hidden;
+    position: fixed;
+    top: 15%;
+    right: 10%;
+    display: flex;
+    flex-direction: column;
+    transition-property: right;
+    transition-delay: 0ms;
+    transition-duration: 1s;
+    z-index: 10;
+}
+
+.r1 {
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+
+#header {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    margin-top: 2%;
+    padding-top: 0;
+}
+
+#title {
+    margin: auto;
+    font-family: hector;
+}
+
+#config-but {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    top: calc(7.5% - 8px);
+    right: calc(7.5% - 20px);
+}
+
+.side {
+    width: 10%;
+    height: 85%;
+    position: fixed;
+    top: 15%;
+    display: flex;
+    z-index: 90;
+    background-color: black;
+}
+
+#right-side {
+    right: 0;
+}
+
+#right-but {
+    margin: auto;
+}
+
+#left-but {
+    margin: auto;
+}
+
+#left-side {
+    left: 0;
+}
+
+.fa-cog {
+    font-size: 40px;
+}
+
+#h9 {
+    font-size: 6rem;
+    font-weight: bold;
+}
+
+.d0 {
+    right: 10%;
+}
+
+.d1 {
+    right: -110%;
+}
+
+
+.CM_button {
+    margin: auto;
+    min-width: 40px;
+    min-height: 40px;
+    background-color: lightseagreen;
+    color: black;
+    font-weight: bold;
+    display: flex;
+    text-align: center;
+    height: 70px;
+    width: 200px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.CM_button > div{
+    margin: auto;
+    font-size: 3rem;
+}
+
+#CM_buttons {
+    width: 50%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.lds-roller {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+    padding: 0;
+}
+
+.lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 32px 32px;
+}
+
+.lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    margin: -3px 0 0 -3px;
+}
+
+.lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+}
+
+.lds-roller div:nth-child(1):after {
+    top: 50px;
+    left: 50px;
+}
+
+.lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+}
+
+.lds-roller div:nth-child(2):after {
+    top: 54px;
+    left: 45px;
+}
+
+.lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+}
+
+.lds-roller div:nth-child(3):after {
+    top: 57px;
+    left: 39px;
+}
+
+.lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+}
+
+.lds-roller div:nth-child(4):after {
+    top: 58px;
+    left: 32px;
+}
+
+.lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+}
+
+.lds-roller div:nth-child(5):after {
+    top: 57px;
+    left: 25px;
+}
+
+.lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+}
+
+.lds-roller div:nth-child(6):after {
+    top: 54px;
+    left: 19px;
+}
+
+.lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+}
+
+.lds-roller div:nth-child(7):after {
+    top: 50px;
+    left: 14px;
+}
+
+.lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+}
+
+.lds-roller div:nth-child(8):after {
+    top: 45px;
+    left: 10px;
+}
+
+@keyframes lds-roller {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    background-color: black;
+}
+
+#loading > div {
+    font-size: 4vh;
+    text-align: center;
+    margin: auto;
+}
+
+.inv {
+    visibility: hidden;
+}

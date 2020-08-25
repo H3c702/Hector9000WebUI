@@ -24,17 +24,21 @@ var displays = [];
 var displaystate = 0;
 var mqtt;
 
-
-var testing = false;
-var host = "localhost";
-var port = 9001;
+const host = "localhost";
+const port = 9001;
 
 
-var TopicDrinkList = "Hector9000/get_drinks";
-var TopicIngredients = "Hector9000/get_ingredientsForDrink";
-var TopicDose = "Hector9000/doseDrink";
-var TopicClean = "??";
-var TopicDry = "??";
+const TopicDrinkList = "Hector9000/get_drinks";
+const TopicIngredients = "Hector9000/get_ingredientsForDrink";
+const TopicDose = "Hector9000/doseDrink";
+const TopicClean = "Hector9000/cleanMe";
+const TopicDry = "Hector9000/dryMe";
+const TopicOpenAllValves = "Hector9000/openAllValves";
+const TopicCloseAllValves = "Hector9000/closeAllValves";
+
+//--------- Testing start ---------------
+
+const testing = true;
 
 var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     '"description": "Ein Getränk",' +
@@ -46,7 +50,10 @@ var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     '{"name": "O-Saft", "ammount": 10}' +
     ']' +
     '}';
+    
 var jsont = '{"drinks": [{"name": "Tequilla Sunrise","id": 123, "alcohol": true},{"name": "bla2","id": 123, "alcohol": false},{"name": "bla3","id": 123, "alcohol": false},{"name": "bla4","id": 123, "alcohol": false},{"name": "bla5","id": 123, "alcohol": true},{"name": "bla6","id": 123, "alcohol": true},{"name": "bla7","id": 123, "alcohol": false}]}';
+
+//--------- Testing end ---------------
 
 function generateButton(name, id, alc) {
     shtml = '<div onclick="openDrinkModal(this)" class="button ';

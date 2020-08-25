@@ -238,7 +238,7 @@
 
 @font-face {
     font-family: "hector";
-    src: url("Data70.ttf");
+    src: url("/font/Data70.ttf");
 }
 
 .inv {
@@ -409,15 +409,15 @@ body {
 
 .CM_button {
     margin: auto;
-    min-width: 40px;
+    min-width: 250px;
     min-height: 40px;
-    background-color: lightseagreen;
+    background-color: #2e72aa;
     color: black;
     font-weight: bold;
     display: flex;
     text-align: center;
-    height: 70px;
-    width: 200px;
+
+    max-width: 450px;
     border: 1px solid black;
     border-radius: 5px;
 }
@@ -428,11 +428,29 @@ body {
 }
 
 #CM_buttons {
-    width: 50%;
-    height: 50%;
+    width: 80%;
+    height: 25%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+
 }
+
+#CM_buttons2 {
+    width: 80%;
+    height: 30%;
+    display: flex;
+    flex-direction: row;
+
+}
+
+#CM_buttons3 {
+    width: 80%;
+    height: 25%;
+    display: flex;
+    flex-direction: row;
+
+}
+
 
 .lds-roller {
     display: inline-block;

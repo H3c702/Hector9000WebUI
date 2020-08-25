@@ -4,7 +4,7 @@
 
 This frontend is tested and optimized only on a 800x480 Chromium browser. There could occur problems in other browsers / screen sizes.
 
-To get the full experience add a `Data70.ttf` containing the Data70 font to the working directory
+To get the full experience add a `Data70.ttf` containing the Data70 font to the font directory
 
 #### For Testing without MQTT-Server:
 

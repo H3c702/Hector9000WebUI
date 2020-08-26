@@ -203,17 +203,18 @@
     margin: auto;
 }
 #CM_content {
-    margin: auto;
+    margin: 0 auto;!important;
     height: 90%;
     width: 90%;
-}
-
-#CM_content > h1{
     text-align: center;
 }
 
+#CM_content > h1{
+    align-items: center;
+}
+
 #CM_content > div {
-    margin: auto;
+    margin: 0 auto;
 }
 
 #ConfigurationModal > div {
@@ -238,7 +239,7 @@
 
 @font-face {
     font-family: "hector";
-    src: url("/font/Data70.ttf");
+    src: url("../font/Data70.ttf");
 }
 
 .inv {
@@ -248,7 +249,9 @@
 
 #mod-config {
     display: flex;
+    align-content: center;
     height: 100%;
+    width: 100%;
 }
 
 #mod-drink {
@@ -409,15 +412,15 @@ body {
 
 .CM_button {
     margin: auto;
-    min-width: 250px;
+    min-width: 40px;
     min-height: 40px;
     background-color: #2e72aa;
     color: black;
     font-weight: bold;
     display: flex;
     text-align: center;
-
-    max-width: 450px;
+    width: 450px;
+    /*max-width: 450px;*/
     border: 1px solid black;
     border-radius: 5px;
 }
@@ -428,7 +431,7 @@ body {
 }
 
 #CM_buttons {
-    width: 80%;
+    /*width: 70%;*/
     height: 25%;
     display: flex;
     flex-direction: row;
@@ -436,7 +439,7 @@ body {
 }
 
 #CM_buttons2 {
-    width: 80%;
+    /*width: 70%;*/
     height: 30%;
     display: flex;
     flex-direction: row;
@@ -444,7 +447,7 @@ body {
 }
 
 #CM_buttons3 {
-    width: 80%;
+    /*width: 70%;*/
     height: 25%;
     display: flex;
     flex-direction: row;

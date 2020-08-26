@@ -4,97 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <title>Hector9000</title>
-    <script src="js/mqtt.js" type="text/javascript"></script>
-    <script src="js/hector9000.js" type="text/javascript"></script>
-    <link href="css/fontawesome/fontawesome.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="css/hector9000.css">
+    <script src="js/mqtt.js"></script>
+    <script src="js/hector9000.js"></script>
+    <link href="css/fontawesome/fontawesome.css" rel="stylesheet" type="text/css"/>
+    <link href="css/hector9000.css" rel="stylesheet" type="text/css">
 </head>
 
 <body onload="startup()">
-    <!-- Scripts-------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-    <!-- Global Variables -->
 
-    <div id="loading">
+<div id="loading">
+    <div>
+        <div style="margin-bottom: 2vh">Loading Drinks</div>
         <div>
-            <div style="margin-bottom: 2vh">Loading Drinks</div>
-            <div>
-                <div class="lds-roller">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
+            <div class="lds-roller">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- All the content -->
-    <div id="content">
-        <div id="header">
-            <div id="title">
-                <span id="h9">Hector 9000</span>
-            </div>
-            <!-- OpenConfig Modal -->
-            <div id="config-but" onclick="openConfigModal()">
-                <i class="fas fa-cog"></i>
-            </div>
+<!-- All the content -->
+<div id="content">
+    <div id="header">
+        <div id="title">
+            <span id="h9">Hector 9000</span>
         </div>
-        <!-- Move the main-panel -->
-        <div class="side" id="right-side">
-            <div class="side-but" id="right-but" onclick="right()">
-                <i class="fas fa-caret-right fas-s"></i>
-            </div>
+        <!-- OpenConfig Modal -->
+        <div id="config-but" onclick="openConfigModal()">
+            <i class="fas fa-cog"></i>
         </div>
-        <div class="side" id="left-side">
-            <div class="side-but" id="left-but" onclick="left()">
-                <i class="fas fa-caret-left fas-s"></i>
-            </div>
+    </div>
+    <!-- Move the main-panel -->
+    <div class="side" id="right-side">
+        <div class="side-but" id="right-but" onclick="right()">
+            <i class="fas fa-caret-right fas-s"></i>
         </div>
-        <!-- Drink-info modal -->
-        <div class="modal" id="mainModal">
-            <div id="mod-drink" class="inv">
-                <div id="DM_description">
-                    <div id="DM_name"><u>Getränk name</u></div>
-                    <div id="DM_List">
-                        <div id="DM_ing_loader">
-                            <div>
-                                <div class="lds-roller">
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="DM_buttons">
-                    <div id="DM_dose_bar" class="dis inv">
-                        <div id="outter_bar">
-                            <div id="inner_bar">
-                                <div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="DM_button" id="DM_abbruch" onclick="closeDrinkModal()"><i
-                            class="far fa-times-circle"></i><span style="padding-right: 10px;">Abbruch</span></div>
-                    <div class="DM_button" id="DM_zubereiten" onclick="">
-                        <div id="DM_zubereiten_inner">
-                            <i class="fas fa-cocktail" style="margin-top: auto; margin-bottom: auto;"></i>
-                            <span
-                                style="margin-top: auto; margin-bottom: auto; padding-right: 10px; padding-left: 10px;">Zubereiten</span>
-                        </div>
-                        <div class="inv" id="DM_zubereiten_loading">
+    </div>
+    <div class="side" id="left-side">
+        <div class="side-but" id="left-but" onclick="left()">
+            <i class="fas fa-caret-left fas-s"></i>
+        </div>
+    </div>
+    <!-- Drink-info modal -->
+    <div class="modal" id="mainModal">
+        <div class="inv" id="mod-drink">
+            <div id="DM_description">
+                <div id="DM_name"><u>Getränk name</u></div>
+                <div id="DM_List">
+                    <div id="DM_ing_loader">
+                        <div>
                             <div class="lds-roller">
                                 <div></div>
                                 <div></div>
@@ -109,41 +74,73 @@
                     </div>
                 </div>
             </div>
-            <div id="mod-config" class="inv">
-                <div class ="CM_content">
-                    <h1>Configuration</h1>
-                    <div id="CM_buttons">
-                        <div class="CM_button" onclick="publish(TopicDry, 'true')">
-                            <div>DRY</div>
-                        </div>
-                        <div onclick="publish(TopicClean, 'true')" class="CM_button">
-                            <div>CLEAN</div>
+            <div id="DM_buttons">
+                <div class="dis inv" id="DM_dose_bar">
+                    <div id="outter_bar">
+                        <div id="inner_bar">
+                            <div>
+
+                            </div>
                         </div>
                     </div>
-                    <div id="CM_buttons2">
-                        <div onclick="publish(TopicCloseAllValves, 'true')" class="CM_button">
-                            <div>Close all valves</div>
-                        </div>
-                        <div onclick="publish(TopicOpenAllValves, 'true')" class="CM_button">
-                            <div>Open all valves</div>
-                        </div>
+                </div>
+                <div class="DM_button" id="DM_abbruch" onclick="closeDrinkModal()"><i
+                        class="far fa-times-circle"></i><span style="padding-right: 10px;">Abbruch</span></div>
+                <div class="DM_button" id="DM_zubereiten" onclick="">
+                    <div id="DM_zubereiten_inner">
+                        <i class="fas fa-cocktail" style="margin-top: auto; margin-bottom: auto;"></i>
+                        <span
+                                style="margin-top: auto; margin-bottom: auto; padding-right: 10px; padding-left: 10px;">Zubereiten</span>
                     </div>
-                    <div id="CM_buttons3">
-                        <div onclick="location.reload()" class="CM_button">
-                            <div>RELOAD</div>
-                        </div>
-                        <div class="CM_button" onclick="closeConfigModal()">
-                            <div>Close</div>
+                    <div class="inv" id="DM_zubereiten_loading">
+                        <div class="lds-roller">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="inv" id="mod-config">
+            <div id="CM_content">
+                <h1>Configuration</h1>
+                <div id="CM_buttons">
+                    <div class="CM_button" onclick="publish(TopicDry, 'true')">
+                        <div>DRY</div>
+                    </div>
+                    <div class="CM_button" onclick="publish(TopicClean, 'true')">
+                        <div>CLEAN</div>
+                    </div>
+                </div>
+                <div id="CM_buttons2">
+                    <div class="CM_button" onclick="publish(TopicCloseAllValves, 'true')">
+                        <div>Close all valves</div>
+                    </div>
+                    <div class="CM_button" onclick="publish(TopicOpenAllValves, 'true')">
+                        <div>Open all valves</div>
+                    </div>
+                </div>
+                <div id="CM_buttons3">
+                    <div class="CM_button" onclick="location.reload()">
+                        <div>RELOAD</div>
+                    </div>
+                    <div class="CM_button" onclick="closeConfigModal()">
+                        <div>Close</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    </div>
-
-    <div class="MC_cls" id="modalclose" onclick="closeEitherModal()"></div>
-    </div>
+</div>
+<div>
+<div class="MC_cls" id="modalclose" onclick="closeEitherModal()"></div>
+</div>
 
 </body>
 

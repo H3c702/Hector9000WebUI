@@ -6,9 +6,12 @@ This frontend is tested and optimized only on a 800x480 Chromium browser. There 
 
 To get the full experience add a `Data70.ttf` containing the Data70 font to the font directory
 
+    JS location: js/hector9000.js
+
 #### For Testing without MQTT-Server:
 
-Set JS-Variable:  
+Set JS-Variable:
+
 ```javascript
 var testing = true;
 ```

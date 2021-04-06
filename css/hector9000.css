@@ -378,7 +378,7 @@ body {
     height: 40px;
     position: fixed;
     top: calc(7.5% - 8px);
-    right: calc(7.5% - 40px);
+    right: calc(7.5% + 40px);
 }
 
 

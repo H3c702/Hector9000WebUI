@@ -38,7 +38,7 @@ const TopicCloseAllValves = "Hector9000/closeAllValves";
 
 //--------- Testing start ---------------
 
-const testing = false;
+const testing = true;
 
 var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     '"description": "Ein Getränk",' +
@@ -255,6 +255,15 @@ function openConfigModal() {
     }
 }
 
+function openValveConfigModal() {
+    if (MM_status === MM_State.CLOSED) {
+        openModal();
+        setTimeout(function () {
+            document.getElementById("mod-valves").className = "";
+        }, 700);
+    }
+}
+
 
 // Modalback
 function openModalBack() {
@@ -280,7 +289,7 @@ function doseDrink(id) {
                     document.getElementById("DM_abbruch").className = "DM_button inv";
                     document.getElementById("DM_zubereiten").className = "DM_button inv";
                     document.getElementById("DM_dose_bar").className = "";
-                    updateDosingState(id, 5);
+                    //updateDosingState(id, 5);
                 }, 500);
             }, 3000);
             setTimeout(function () {

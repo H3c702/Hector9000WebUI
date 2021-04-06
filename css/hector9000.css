@@ -254,6 +254,14 @@
     width: 100%;
 }
 
+#mod-valves {
+    display: flex;
+    align-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+
 #mod-drink {
     height: 100%;
 }
@@ -365,6 +373,15 @@ body {
     top: calc(7.5% - 8px);
     right: calc(7.5% - 20px);
 }
+#config-but2 {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    top: calc(7.5% - 8px);
+    right: calc(7.5% - 40px);
+}
+
+
 
 .side {
     width: 10%;
@@ -393,6 +410,10 @@ body {
 }
 
 .fa-cog {
+    font-size: 40px;
+}
+
+.fa-faucet {
     font-size: 40px;
 }
 

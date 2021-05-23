@@ -202,18 +202,18 @@
     font-size: 60vh;
     margin: auto;
 }
-#CM_content {
+.CM_content {
     margin: 0 auto;!important;
     height: 90%;
     width: 90%;
     text-align: center;
 }
 
-#CM_content > h1{
+.CM_content > h1{
     align-items: center;
 }
 
-#CM_content > div {
+.CM_content > div {
     margin: 0 auto;
 }
 
@@ -373,6 +373,7 @@ body {
     top: calc(7.5% - 8px);
     right: calc(7.5% - 20px);
 }
+
 #config-but2 {
     width: 40px;
     height: 40px;
@@ -430,6 +431,27 @@ body {
     right: -110%;
 }
 
+.form-select {
+    min-width: 40px;
+    min-height: 60px;
+    background-color: #2e72aa;
+    color: black;
+    font-weight: bold;
+    display: flex;
+    text-align: center;
+    width: 300px;
+    font-size: 2rem;
+    margin: auto;
+}
+
+.form-p{
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    text-align: center;
+    font-size: 2rem;
+    margin: auto;
+}
 
 .CM_button {
     margin: auto;
@@ -446,11 +468,14 @@ body {
     border-radius: 5px;
 }
 
-.CM_button > div{
-    margin: auto;
-    font-size: 3rem;
+.CM_contentRow{
+    height: 25%;
+    display: flex;
+    flex-direction: row;
 }
-
+.CM_contentRow > div{
+    margin: auto;
+}
 #CM_buttons {
     /*width: 70%;*/
     height: 25%;

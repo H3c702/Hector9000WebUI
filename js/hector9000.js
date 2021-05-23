@@ -29,12 +29,16 @@ const port = 9001;
 
 
 const TopicDrinkList = "Hector9000/get_drinks";
+const TopicIngredientsList = "Hector9000/get_ingredientsList";
 const TopicIngredients = "Hector9000/get_ingredientsForDrink";
 const TopicDose = "Hector9000/doseDrink";
 const TopicClean = "Hector9000/cleanMe";
 const TopicDry = "Hector9000/dryMe";
 const TopicOpenAllValves = "Hector9000/openAllValves";
 const TopicCloseAllValves = "Hector9000/closeAllValves";
+
+const TopicGetValves = "Hector9000/get_servo";
+const TopicSetValves = "Hector9000/set_servo";
 
 //--------- Testing start ---------------
 
@@ -50,7 +54,9 @@ var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     '{"name": "O-Saft", "ammount": 10}' +
     ']' +
     '}';
-    
+
+var ingjson = '[["gin", "Gin", 1], ["rum", "Rum", 1], ["vodka", "Vodka", 1], ["tequila", "Tequila", 1], ["tonic", "Tonic Water", 0], ["coke", "Cola", 0], ["oj", "Orange Juice", 0], ["gren", "Grenadine", 0], ["mmix", "Margarita Mix", 1], ["mate", "Mate", 0], ["pine", "Pineapple Juice", 0], ["raspberry", "Raspberry", 0], ["gga", "Ginger Ale", 0], ["cocos", "Cocos", 0], ["mango", "Mango Juice", 0], ["lms", "Limettensaft", 0], ["coin", "Cointreau", 1], ["lime", "Lime", 0], ["gibe", "Ginger Beer", 0]]'
+
 var jsont = '{"drinks": [{"name": "Tequilla Sunrise","id": 123, "alcohol": true},{"name": "bla2","id": 123, "alcohol": false},{"name": "bla3","id": 123, "alcohol": false},{"name": "bla4","id": 123, "alcohol": false},{"name": "bla5","id": 123, "alcohol": true},{"name": "bla6","id": 123, "alcohol": true},{"name": "bla7","id": 123, "alcohol": false}]}';
 
 //--------- Testing end ---------------
@@ -142,6 +148,7 @@ function closeModal() {
         setTimeout(function () {
             document.getElementById("mod-config").className = "inv";
             document.getElementById("mod-drink").className = "inv";
+            document.getElementById("mod-valves").className = "inv";
         }, 300);
         setTimeout(function () {
             main_modal.className = "modal";
@@ -233,6 +240,13 @@ console.log(DM_status);
 
 
 // Configmodal
+
+function generateValveSelection(json)
+{
+    const obj = JSON.parse(json);
+
+}
+
 function resetCM() {
     //Nothing to reset yet
 }
@@ -261,6 +275,7 @@ function openValveConfigModal() {
         setTimeout(function () {
             document.getElementById("mod-valves").className = "";
         }, 700);
+        publish(TopicIngredientsList, "true");
     }
 }
 
@@ -402,6 +417,14 @@ console.log("ingredientsub");
     }
 }
 
+function IngredientListSubscriber(payload) {
+    console.log("ingredientListsub");
+    if(!started){
+        generateValveSelection(payload);
+    }
+}
+
+
 function DrinkSubscriber(payload) {
     if(!started){
         generateButtons(payload);
@@ -448,12 +471,16 @@ console.log("payload: " + msg.payloadString);
         DoseStartSubscriber(msg.payloadString);
     } else if (topic === TopicDose + "/progress") {
         DrinkProcessSubscriber(msg.payloadString);
+    } else if (topic === TopicIngredientsList + "/return") {
+        IngredientListSubscriber(msg.payloadString);
     }
+
 }
 
 function onConnect() {
     mqtt.subscribe(TopicDrinkList + "/return");
     mqtt.subscribe(TopicIngredients + "/return");
+    mqtt.subscribe(TopicIngredientsList + "/return");
     mqtt.subscribe(TopicDose + "/progress");
     mqtt.subscribe(TopicDose + "/return");
 publishatstart();

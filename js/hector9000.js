@@ -37,12 +37,12 @@ const TopicDry = "Hector9000/dryMe";
 const TopicOpenAllValves = "Hector9000/openAllValves";
 const TopicCloseAllValves = "Hector9000/closeAllValves";
 
-const TopicGetValves = "Hector9000/get_servo";
+const TopicGetValves = "Hector9000/get_allservos";
 const TopicSetValves = "Hector9000/set_servo";
 
 //--------- Testing start ---------------
 
-const testing = true;
+const testing = false;
 
 var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     '"description": "Ein Getränk",' +
@@ -55,7 +55,9 @@ var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     ']' +
     '}';
 
-var ingjson = '[["gin", "Gin", 1], ["rum", "Rum", 1], ["vodka", "Vodka", 1], ["tequila", "Tequila", 1], ["tonic", "Tonic Water", 0], ["coke", "Cola", 0], ["oj", "Orange Juice", 0], ["gren", "Grenadine", 0], ["mmix", "Margarita Mix", 1], ["mate", "Mate", 0], ["pine", "Pineapple Juice", 0], ["raspberry", "Raspberry", 0], ["gga", "Ginger Ale", 0], ["cocos", "Cocos", 0], ["mango", "Mango Juice", 0], ["lms", "Limettensaft", 0], ["coin", "Cointreau", 1], ["lime", "Lime", 0], ["gibe", "Ginger Beer", 0]]'
+var servos = '{"Servos": [{"servo": 1, "ingri": "gren", "volume": 0}, {"servo": 2, "ingri": "rum", "volume": 0}, {"servo": 3, "ingri": "vodka", "volume": 0}, {"servo": 4, "ingri": "gin", "volume": 0}, {"servo": 5, "ingri": "tequila", "volume": 0}, {"servo": 6, "ingri": "gibe", "volume": 0}, {"servo": 7, "ingri": "lime", "volume": 0}, {"servo": 8, "ingri": "tonic", "volume": 0}, {"servo": 9, "ingri": "mate", "volume": 0}, {"servo": 10, "ingri": "gga", "volume": 0}, {"servo": 11, "ingri": "pine", "volume": 0}, {"servo": 12, "ingri": "oj", "volume": 0}]}'
+
+var ingjson = '{"Ingredients": [{"code": "gin", "name": "Gin", "isAlcoholic": 1}, {"code": "rum", "name": "Rum", "isAlcoholic": 1}, {"code": "vodka", "name": "Vodka", "isAlcoholic": 1}, {"code": "tequila", "name": "Tequila", "isAlcoholic": 1}, {"code": "tonic", "name": "Tonic Water", "isAlcoholic": 0}, {"code": "coke", "name": "Cola", "isAlcoholic": 0}, {"code": "oj", "name": "Orange Juice", "isAlcoholic": 0}, {"code": "gren", "name": "Grenadine", "isAlcoholic": 0}, {"code": "mmix", "name": "Margarita Mix", "isAlcoholic": 1}, {"code": "mate", "name": "Mate", "isAlcoholic": 0}, {"code": "pine", "name": "Pineapple Juice", "isAlcoholic": 0}, {"code": "raspberry", "name": "Raspberry", "isAlcoholic": 0}, {"code": "gga", "name": "Ginger Ale", "isAlcoholic": 0}, {"code": "cocos", "name": "Cocos", "isAlcoholic": 0}, {"code": "mango", "name": "Mango Juice", "isAlcoholic": 0}, {"code": "lms", "name": "Limettensaft", "isAlcoholic": 0}, {"code": "coin", "name": "Cointreau", "isAlcoholic": 1}, {"code": "lime", "name": "Lime", "isAlcoholic": 0}, {"code": "gibe", "name": "Ginger Beer", "isAlcoholic": 0}]}'
 
 var jsont = '{"drinks": [{"name": "Tequilla Sunrise","id": 123, "alcohol": true},{"name": "bla2","id": 123, "alcohol": false},{"name": "bla3","id": 123, "alcohol": false},{"name": "bla4","id": 123, "alcohol": false},{"name": "bla5","id": 123, "alcohol": true},{"name": "bla6","id": 123, "alcohol": true},{"name": "bla7","id": 123, "alcohol": false}]}';
 
@@ -241,10 +243,30 @@ console.log(DM_status);
 
 // Configmodal
 
+function storeValveSet(json)
+{
+    sessionStorage["valveSet"] = json;
+    console.log(sessionStorage["valveSet"]);
+}
+
 function generateValveSelection(json)
 {
-    const obj = JSON.parse(json);
+    console.log("JSONNNNN:")
 
+    const obj = JSON.parse(json);
+    const valveSet = JSON.parse(sessionStorage["valveSet"]);
+    obj.Ingredients.forEach(function(item){
+        var x = document.getElementById("valve1")
+        var option = document.createElement("option");
+        console.log(item);
+        option.text = item["name"];
+        x.add(option);
+
+        if(item["code"] == valveSet.Servos[0].ingri)
+        {
+            document.getElementById("valve1").value = item["name"];
+        }
+    });
 }
 
 function resetCM() {
@@ -275,7 +297,15 @@ function openValveConfigModal() {
         setTimeout(function () {
             document.getElementById("mod-valves").className = "";
         }, 700);
-        publish(TopicIngredientsList, "true");
+
+        if(testing) {
+            generateValveSelection(ingjson);
+        }else {
+            sessionStorage["dd"] = 22;
+            publish(TopicGetValves, "true");
+            publish(TopicIngredientsList, "true");
+        }
+
     }
 }
 
@@ -417,9 +447,17 @@ console.log("ingredientsub");
     }
 }
 
+function GetValvesSubscriber(payload){
+    console.log("GetValvesSubscriber");
+    if(started){
+        storeValveSet(payload);
+    }
+}
+
 function IngredientListSubscriber(payload) {
     console.log("ingredientListsub");
-    if(!started){
+
+    if(started){
         generateValveSelection(payload);
     }
 }
@@ -473,6 +511,8 @@ console.log("payload: " + msg.payloadString);
         DrinkProcessSubscriber(msg.payloadString);
     } else if (topic === TopicIngredientsList + "/return") {
         IngredientListSubscriber(msg.payloadString);
+    } else if (topic === TopicGetValves + "/return") {
+        GetValvesSubscriber(msg.payloadString);
     }
 
 }
@@ -481,6 +521,7 @@ function onConnect() {
     mqtt.subscribe(TopicDrinkList + "/return");
     mqtt.subscribe(TopicIngredients + "/return");
     mqtt.subscribe(TopicIngredientsList + "/return");
+    mqtt.subscribe(TopicGetValves + "/return");
     mqtt.subscribe(TopicDose + "/progress");
     mqtt.subscribe(TopicDose + "/return");
 publishatstart();

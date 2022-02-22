@@ -42,7 +42,7 @@ const TopicSetValves = "Hector9000/set_servo";
 
 //--------- Testing start ---------------
 
-const testing = false;
+const testing = true;
 
 var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     '"description": "Ein Getränk",' +
@@ -73,7 +73,7 @@ function generateButton(name, id, alc) {
 }
 
 function generateButtons(drinksjson) {
-started = true;
+    started = true;
     var json = JSON.parse(drinksjson);
     jl = json.drinks.length;
     cont = document.getElementById("content");
@@ -246,25 +246,26 @@ console.log(DM_status);
 function storeValveSet(json)
 {
     sessionStorage["valveSet"] = json;
-    console.log(sessionStorage["valveSet"]);
 }
 
-function generateValveSelection(json)
-{
+function generateValveSelection(json) {
     console.log("JSONNNNN:")
 
     const obj = JSON.parse(json);
     const valveSet = JSON.parse(sessionStorage["valveSet"]);
-    obj.Ingredients.forEach(function(item){
-        var x = document.getElementById("valve1")
-        var option = document.createElement("option");
-        console.log(item);
-        option.text = item["name"];
-        x.add(option);
 
-        if(item["code"] == valveSet.Servos[0].ingri)
+    obj.Ingredients.forEach(function (item) {
+        for(var i = 1; i<=2;i++)
         {
-            document.getElementById("valve1").value = item["name"];
+            var x = document.getElementById("valve"+i.toString())
+            var option = document.createElement("option");
+            option.text = item["name"];
+    
+            if(item["code"] == valveSet.Servos[i-1]["ingri"])
+            {
+                option.selected = true;
+            }
+            x.add(option);
         }
     });
 }
@@ -299,6 +300,7 @@ function openValveConfigModal() {
         }, 700);
 
         if(testing) {
+            storeValveSet(servos);
             generateValveSelection(ingjson);
         }else {
             sessionStorage["dd"] = 22;

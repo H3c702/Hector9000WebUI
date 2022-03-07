@@ -207,6 +207,8 @@
     height: 90%;
     width: 90%;
     text-align: center;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .CM_content > h1{

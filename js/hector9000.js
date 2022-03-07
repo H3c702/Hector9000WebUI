@@ -255,12 +255,12 @@ function generateValveSelection(json) {
     const valveSet = JSON.parse(sessionStorage["valveSet"]);
 
     obj.Ingredients.forEach(function (item) {
-        for(var i = 1; i<=2;i++)
+        for(var i = 1; i<=12;i++)
         {
             var x = document.getElementById("valve"+i.toString())
             var option = document.createElement("option");
             option.text = item["name"];
-    
+
             if(item["code"] == valveSet.Servos[i-1]["ingri"])
             {
                 option.selected = true;

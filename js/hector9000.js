@@ -55,7 +55,7 @@ var drinkjson = '{ "id": "123", "name": "Getränk","color": "#999999",' +
     ']' +
     '}';
 
-var servos = '{"Servos": [{"servo": 1, "ingri": "gren", "volume": 0}, {"servo": 2, "ingri": "rum", "volume": 0}, {"servo": 3, "ingri": "vodka", "volume": 0}, {"servo": 4, "ingri": "gin", "volume": 0}, {"servo": 5, "ingri": "tequila", "volume": 0}, {"servo": 6, "ingri": "gibe", "volume": 0}, {"servo": 7, "ingri": "lime", "volume": 0}, {"servo": 8, "ingri": "tonic", "volume": 0}, {"servo": 9, "ingri": "mate", "volume": 0}, {"servo": 10, "ingri": "gga", "volume": 0}, {"servo": 11, "ingri": "pine", "volume": 0}, {"servo": 12, "ingri": "oj", "volume": 0}]}'
+var servos = '{"Servos": [{"servo": 1, "ingri": "gin", "volume": 0}, {"servo": 2, "ingri": "rum", "volume": 0}, {"servo": 3, "ingri": "vodka", "volume": 0}, {"servo": 4, "ingri": "gin", "volume": 0}, {"servo": 5, "ingri": "tequila", "volume": 0}, {"servo": 6, "ingri": "gibe", "volume": 0}, {"servo": 7, "ingri": "lime", "volume": 0}, {"servo": 8, "ingri": "tonic", "volume": 0}, {"servo": 9, "ingri": "mate", "volume": 0}, {"servo": 10, "ingri": "gga", "volume": 0}, {"servo": 11, "ingri": "pine", "volume": 0}, {"servo": 12, "ingri": "oj", "volume": 0}]}'
 
 var ingjson = '{"Ingredients": [{"code": "gin", "name": "Gin", "isAlcoholic": 1}, {"code": "rum", "name": "Rum", "isAlcoholic": 1}, {"code": "vodka", "name": "Vodka", "isAlcoholic": 1}, {"code": "tequila", "name": "Tequila", "isAlcoholic": 1}, {"code": "tonic", "name": "Tonic Water", "isAlcoholic": 0}, {"code": "coke", "name": "Cola", "isAlcoholic": 0}, {"code": "oj", "name": "Orange Juice", "isAlcoholic": 0}, {"code": "gren", "name": "Grenadine", "isAlcoholic": 0}, {"code": "mmix", "name": "Margarita Mix", "isAlcoholic": 1}, {"code": "mate", "name": "Mate", "isAlcoholic": 0}, {"code": "pine", "name": "Pineapple Juice", "isAlcoholic": 0}, {"code": "raspberry", "name": "Raspberry", "isAlcoholic": 0}, {"code": "gga", "name": "Ginger Ale", "isAlcoholic": 0}, {"code": "cocos", "name": "Cocos", "isAlcoholic": 0}, {"code": "mango", "name": "Mango Juice", "isAlcoholic": 0}, {"code": "lms", "name": "Limettensaft", "isAlcoholic": 0}, {"code": "coin", "name": "Cointreau", "isAlcoholic": 1}, {"code": "lime", "name": "Lime", "isAlcoholic": 0}, {"code": "gibe", "name": "Ginger Beer", "isAlcoholic": 0}]}'
 
@@ -249,8 +249,6 @@ function storeValveSet(json)
 }
 
 function generateValveSelection(json) {
-    console.log("JSONNNNN:")
-
     const obj = JSON.parse(json);
     const valveSet = JSON.parse(sessionStorage["valveSet"]);
 
@@ -309,6 +307,30 @@ function openValveConfigModal() {
         }
 
     }
+}
+
+function saveValveConfig()
+{
+    //var servos = '{"Servos": [{"servo": 1, "ingri": "gren", "volume": 0}, {"servo": 2, "ingri": "rum", "volume": 0}, {"servo": 3, "ingri": "vodka", "volume": 0}, {"servo": 4, "ingri": "gin", "volume": 0}, {"servo": 5, "ingri": "tequila", "volume": 0}, {"servo": 6, "ingri": "gibe", "volume": 0}, {"servo": 7, "ingri": "lime", "volume": 0}, {"servo": 8, "ingri": "tonic", "volume": 0}, {"servo": 9, "ingri": "mate", "volume": 0}, {"servo": 10, "ingri": "gga", "volume": 0}, {"servo": 11, "ingri": "pine", "volume": 0}, {"servo": 12, "ingri": "oj", "volume": 0}]}'
+
+    var ret= '{"Servos": [';
+    '{"code": 12,"servo": 19}'
+    obj.Ingredients.forEach(function (item) {
+        for(var i = 1; i<=12;i++)
+        {
+            var x = document.getElementById("valve"+i.toString())
+
+            Array.from(document.querySelector("#valve"+i.toString()).options).forEach(function(option_element) {
+                let option_text = option_element.text;
+                let option_value = option_element.value;
+                let is_option_selected = option_element.selected;
+                if(is_option_selected)
+                {
+                    ret += '"servo": '+i.toString()+', "ingri": '+ option_value ;
+                }
+            });
+        }
+    });
 }
 
 

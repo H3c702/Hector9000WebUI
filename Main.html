@@ -116,26 +116,26 @@
                 <h1>Configuration</h1>
                 <div id="CM_buttons">
                     <div class="CM_button" onclick="publish(TopicDry, 'true')">
-                        <div>DRY</div>
+                        <p>DRY</p>
                     </div>
                     <div class="CM_button" onclick="publish(TopicClean, 'true')">
-                        <div>CLEAN</div>
+                        <p>CLEAN</p>
                     </div>
                 </div>
                 <div id="CM_buttons2">
                     <div class="CM_button" onclick="publish(TopicCloseAllValves, 'true')">
-                        <div>Close all valves</div>
+                        <p>Close all valves</p>
                     </div>
                     <div class="CM_button" onclick="publish(TopicOpenAllValves, 'true')">
-                        <div>Open all valves</div>
+                        <p>Open all valves</p>
                     </div>
                 </div>
                 <div id="CM_buttons3">
                     <div class="CM_button" onclick="location.reload()">
-                        <div>RELOAD</div>
+                        <p>RELOAD</p>
                     </div>
                     <div class="CM_button" onclick="closeConfigModal()">
-                        <div>Close</div>
+                        <p>Close</p>
                     </div>
                 </div>
             </div>
@@ -203,6 +203,14 @@
                         <option value="">Choose...</option>
                     </select></div>
                 </div>
+
+                <div class="CM_contentRow">
+                    <div class="CM_button" onclick="saveValveConfig()">
+                        <p>Save</p>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>

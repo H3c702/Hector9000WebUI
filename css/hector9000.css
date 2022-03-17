@@ -434,15 +434,15 @@ body {
 }
 
 .form-select {
-    min-width: 40px;
+    min-width: 60px;
     min-height: 60px;
     background-color: #2e72aa;
     color: black;
     font-weight: bold;
     display: flex;
     text-align: center;
-    width: 300px;
-    font-size: 2rem;
+    width: 400px;
+    font-size: 3rem;
     margin: auto;
 }
 
@@ -458,12 +458,12 @@ body {
 .CM_button {
     margin: auto;
     min-width: 40px;
-    min-height: 40px;
+    min-height: 80px;
     background-color: #2e72aa;
     color: black;
     font-weight: bold;
-    display: flex;
     text-align: center;
+    font-size: 48px;
     width: 450px;
     /*max-width: 450px;*/
     border: 1px solid black;
@@ -488,7 +488,7 @@ body {
 
 #CM_buttons2 {
     /*width: 70%;*/
-    height: 30%;
+    height: 25%;
     display: flex;
     flex-direction: row;
 

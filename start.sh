@@ -1,1 +1,1 @@
-chromium-browser --start-fullscreen Main.html
+chromium-browser --start-fullscreen --disable-gpu Main.html

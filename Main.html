@@ -1,224 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Hector9000</title>
     <script src="js/mqtt.js"></script>
     <script src="js/hector9000.js"></script>
-    <link href="css/fontawesome/fontawesome.css" rel="stylesheet" type="text/css"/>
-    <link href="css/hector9000.css" rel="stylesheet" type="text/css">
-</head>
+    <link
+      href="css/fontawesome/fontawesome.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="css/hector9000.css" rel="stylesheet" type="text/css" />
+  </head>
 
-<body onload="startup()">
-
-<div id="loading">
-    <div>
+  <body onload="startup()">
+    <div id="loading">
+      <div>
         <div style="margin-bottom: 2vh">Loading Drinks</div>
         <div>
-            <div class="lds-roller">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
+          <div class="lds-roller">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<!-- All the content -->
-<div id="content">
-    <div id="header">
+    <!-- All the content -->
+    <div id="content">
+      <div id="header">
         <div id="title">
-            <span id="h9">Hector 9000</span>
+          <span id="h9">Hector 9000</span>
         </div>
         <!-- OpenConfig Modal -->
-        <div id="config-but" onclick="openConfigModal()">
-            <i class="fas fa-cog"></i>
+        <div
+          id="config-but"
+          onclick="openConfigModal()"
+        >
+          <i class="fas fa-cog"></i>
         </div>
         <!--OpenValveConfig Modal -->
-        <div id="config-but2" onclick="openValveConfigModal()">
-            <i class="fas fa-faucet"></i>
+        <div
+          id="config-but2"
+          onclick="openValveConfigModal()"
+        >
+          <i class="fas fa-faucet"></i>
         </div>
-    </div>
-    <!-- Move the main-panel -->
-    <div class="side" id="right-side">
-        <div class="side-but" id="right-but" onclick="right()">
-            <i class="fas fa-caret-right fas-s"></i>
+      </div>
+      <!-- Move the main-panel -->
+      <div class="side" id="right-side">
+        <div
+          class="side-but"
+          id="right-but"
+          tabindex="0"
+          onkeyup="keypress(this,event)"
+          onclick="right()"
+        >
+          <i class="fas fa-caret-right fas-s"></i>
         </div>
-    </div>
-    <div class="side" id="left-side">
-        <div class="side-but" id="left-but" onclick="left()">
-            <i class="fas fa-caret-left fas-s"></i>
+      </div>
+      <div class="side" id="left-side">
+        <div
+          class="side-but"
+          id="left-but"
+          tabindex="0"
+          onkeyup="keypress(this,event)"
+          onclick="left()"
+        >
+          <i class="fas fa-caret-left fas-s"></i>
         </div>
-    </div>
-    <!-- Drink-info modal -->
-    <div class="modal" id="mainModal">
+      </div>
+      <!-- Drink-info modal -->
+      <div class="modal" id="mainModal">
         <div class="inv" id="mod-drink">
-            <div id="DM_description">
-                <div id="DM_name"><u>Getränk name</u></div>
-                <div id="DM_List">
-                    <div id="DM_ing_loader">
-                        <div>
-                            <div class="lds-roller">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
+          <div id="DM_description">
+            <div id="DM_name"><u>Getränk name</u></div>
+            <div id="DM_List">
+              <div id="DM_ing_loader">
+                <div>
+                  <div class="lds-roller">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
                 </div>
+              </div>
             </div>
-            <div id="DM_buttons">
-                <div class="dis inv" id="DM_dose_bar">
-                    <div id="outter_bar">
-                        <div id="inner_bar">
-                            <div>
-
-                            </div>
-                        </div>
-                    </div>
+          </div>
+          <div id="DM_buttons">
+            <div class="dis inv" id="DM_dose_bar">
+              <div id="outter_bar">
+                <div id="inner_bar">
+                  <div></div>
                 </div>
-                <div class="DM_button" id="DM_abbruch" onclick="closeDrinkModal()"><i
-                        class="far fa-times-circle"></i><span style="padding-right: 10px;">Abbruch</span></div>
-                <div class="DM_button" id="DM_zubereiten" onclick="">
-                    <div id="DM_zubereiten_inner">
-                        <i class="fas fa-cocktail" style="margin-top: auto; margin-bottom: auto;"></i>
-                        <span
-                                style="margin-top: auto; margin-bottom: auto; padding-right: 10px; padding-left: 10px;">Zubereiten</span>
-                    </div>
-                    <div class="inv" id="DM_zubereiten_loading">
-                        <div class="lds-roller">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
+            <div
+              class="DM_button"
+              id="DM_abbruch"
+              onclick="closeDrinkModal()"
+              tabindex="0"
+              onkeyup="keypress(this,event)"
+            >
+              <i class="far fa-times-circle"></i
+              ><span style="padding-right: 10px">Abbruch</span>
+            </div>
+            <div
+              class="DM_button"
+              id="DM_zubereiten"
+              onclick=""
+              tabindex="0"
+              onkeyup="keypress(this,event)"
+            >
+              <div id="DM_zubereiten_inner">
+                <i
+                  class="fas fa-cocktail"
+                  style="margin-top: auto; margin-bottom: auto"
+                ></i>
+                <span
+                  style="
+                    margin-top: auto;
+                    margin-bottom: auto;
+                    padding-right: 10px;
+                    padding-left: 10px;
+                  "
+                  >Zubereiten</span
+                >
+              </div>
+              <div class="inv" id="DM_zubereiten_loading">
+                <div class="lds-roller">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="inv" id="mod-config">
-            <div class="CM_content">
-                <h1>Configuration</h1>
-                <div id="CM_buttons">
-                    <div class="CM_button" onclick="publish(TopicDry, 'true')">
-                        <p>DRY</p>
-                    </div>
-                    <div class="CM_button" onclick="publish(TopicClean, 'true')">
-                        <p>CLEAN</p>
-                    </div>
-                </div>
-                <div id="CM_buttons2">
-                    <div class="CM_button" onclick="publish(TopicCloseAllValves, 'true')">
-                        <p>Close all valves</p>
-                    </div>
-                    <div class="CM_button" onclick="publish(TopicOpenAllValves, 'true')">
-                        <p>Open all valves</p>
-                    </div>
-                </div>
-                <div id="CM_buttons3">
-                    <div class="CM_button" onclick="location.reload()">
-                        <p>RELOAD</p>
-                    </div>
-                    <div class="CM_button" onclick="closeConfigModal()">
-                        <p>Close</p>
-                    </div>
-                </div>
+          <div class="CM_content">
+            <h1>Configuration</h1>
+            <div id="CM_buttons">
+              <div class="CM_button" onclick="publish(TopicDry, 'true')">
+                <p>DRY</p>
+              </div>
+              <div class="CM_button" onclick="publish(TopicClean, 'true')">
+                <p>CLEAN</p>
+              </div>
             </div>
+            <div id="CM_buttons2">
+              <div
+                class="CM_button"
+                onclick="publish(TopicCloseAllValves, 'true')"
+              >
+                <p>Close all valves</p>
+              </div>
+              <div
+                class="CM_button"
+                onclick="publish(TopicOpenAllValves, 'true')"
+              >
+                <p>Open all valves</p>
+              </div>
+            </div>
+            <div id="CM_buttons3">
+              <div class="CM_button" onclick="location.reload()">
+                <p>RELOAD</p>
+              </div>
+              <div class="CM_button" onclick="closeConfigModal()">
+                <p>Close</p>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="inv" id="mod-valves">
-            <div class="CM_content">
-                <h1>Valveconfiguration</h1>
+          <div class="CM_content">
+            <h1>Valveconfiguration</h1>
 
-                <div class="CM_contentRow">
-                    <div><div class="form-p"> Servo 1:</div> <select class="form-select" id="valve1" required="">
-                        <option value="">Choose...</option>
-
-                    </select></div>
-                    <div><div class="form-p"> Servo 2:</div> <select class="form-select" id="valve2" required="">
-                        <option value="">Choose...</option>
-                    </select></div>
-                </div>
-
-                <div class="CM_contentRow">
-                    <div><div class="form-p"> Servo 3:</div> <select class="form-select" id="valve3" required="">
-                        <option value="">Choose...</option>
-
-                    </select></div>
-                    <div><div class="form-p"> Servo 4:</div> <select class="form-select" id="valve4" required="">
-                        <option value="">Choose...</option>
-                    </select></div>
-                </div>
-
-                <div class="CM_contentRow">
-                    <div><div class="form-p"> Servo 5:</div> <select class="form-select" id="valve5" required="">
-                        <option value="">Choose...</option>
-
-                    </select></div>
-                    <div><div class="form-p"> Servo 6:</div> <select class="form-select" id="valve6" required="">
-                        <option value="">Choose...</option>
-                    </select></div>
-                </div>
-
-                <div class="CM_contentRow">
-                    <div><div class="form-p"> Servo 7:</div> <select class="form-select" id="valve7" required="">
-                        <option value="">Choose...</option>
-
-                    </select></div>
-                    <div><div class="form-p"> Servo 8:</div> <select class="form-select" id="valve8" required="">
-                        <option value="">Choose...</option>
-                    </select></div>
-                </div>
-
-                <div class="CM_contentRow">
-                    <div><div class="form-p"> Servo 9:</div> <select class="form-select" id="valve9" required="">
-                        <option value="">Choose...</option>
-
-                    </select></div>
-                    <div><div class="form-p"> Servo 10:</div> <select class="form-select" id="valve10" required="">
-                        <option value="">Choose...</option>
-                    </select></div>
-                </div>
-
-                <div class="CM_contentRow">
-                    <div><div class="form-p"> Servo 11:</div> <select class="form-select" id="valve11" required="">
-                        <option value="">Choose...</option>
-
-                    </select></div>
-                    <div><div class="form-p"> Servo 12:</div> <select class="form-select" id="valve12" required="">
-                        <option value="">Choose...</option>
-                    </select></div>
-                </div>
-
-                <div class="CM_contentRow">
-                    <div class="CM_button" onclick="saveValveConfig()">
-                        <p>Save</p>
-                    </div>
-                </div>
-
-
+            <div class="CM_contentRow">
+              <div>
+                <div class="form-p">Servo 1:</div>
+                <select class="form-select" id="valve1" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+              <div>
+                <div class="form-p">Servo 2:</div>
+                <select class="form-select" id="valve2" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
             </div>
+
+            <div class="CM_contentRow">
+              <div>
+                <div class="form-p">Servo 3:</div>
+                <select class="form-select" id="valve3" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+              <div>
+                <div class="form-p">Servo 4:</div>
+                <select class="form-select" id="valve4" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="CM_contentRow">
+              <div>
+                <div class="form-p">Servo 5:</div>
+                <select class="form-select" id="valve5" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+              <div>
+                <div class="form-p">Servo 6:</div>
+                <select class="form-select" id="valve6" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="CM_contentRow">
+              <div>
+                <div class="form-p">Servo 7:</div>
+                <select class="form-select" id="valve7" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+              <div>
+                <div class="form-p">Servo 8:</div>
+                <select class="form-select" id="valve8" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="CM_contentRow">
+              <div>
+                <div class="form-p">Servo 9:</div>
+                <select class="form-select" id="valve9" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+              <div>
+                <div class="form-p">Servo 10:</div>
+                <select class="form-select" id="valve10" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="CM_contentRow">
+              <div>
+                <div class="form-p">Servo 11:</div>
+                <select class="form-select" id="valve11" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+              <div>
+                <div class="form-p">Servo 12:</div>
+                <select class="form-select" id="valve12" required="">
+                  <option value="">Choose...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="CM_contentRow">
+              <div class="CM_button" onclick="saveValveConfig()">
+                <p>Save</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-<div>
-<div class="MC_cls" id="modalclose" onclick="closeEitherModal()"></div>
-</div>
-
-</body>
-
+    <div>
+      <div class="MC_cls" id="modalclose" onclick="closeEitherModal()"></div>
+    </div>
+  </body>
 </html>

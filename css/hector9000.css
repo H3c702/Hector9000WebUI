@@ -2,6 +2,14 @@
   opacity: 1;
 }
 
+div:focus{
+    outline-width: 3px;
+    outline-style: dashed;
+    outline-color: orange;
+    outline-offset: 5px;
+    transform: scale(1.09);
+}
+
 #inner_bar {
   transition: width 500ms;
   height: 100%;

@@ -146,6 +146,7 @@ function generateButtons(drinksjson) {
     document.getElementById(displays[i]).style.right =
       "" + (-i * 100 + 10) + "%";
   }
+  setTabindex();
   document.addEventListener("keydown", keydown);
   document.getElementById("loading").className = "inv";
 }
@@ -472,12 +473,32 @@ function keypress(id, e) {
   }
 }
 
+function setTabindex()
+{
+  for (var d = 1; d <= displays.length; d++)
+  {
+    let b = document.getElementById('id'+d);
+    let a = b.querySelectorAll('.button');
+
+    let tabi = -1;
+    
+    if(d == displaystate+1){
+        tabi = 0;
+    }
+
+    for (var i = 0; i < a.length; i++) {
+        a[i].tabIndex = tabi;
+    }
+  }
+}
+
 function right() {
   if (MM_status === MM_State.RUNNING) {
     closeEitherModal();
   } else if (MM_status !== MM_State.CLOSED) {
   } else if (displaystate < displays.length - 1) {
     displaystate++;
+    console.log(displaystate);
     for (i = 0; i < displays.length; i++) {
       rg = "" + ((-i + displaystate) * 100 + 10) + "%";
       document.getElementById(displays[i]).style.right = rg;
@@ -489,6 +510,7 @@ function right() {
       document.getElementById(displays[i]).style.right = rg;
     }
   }
+  setTabindex();
 }
 
 function left() {
@@ -508,6 +530,7 @@ function left() {
       document.getElementById(displays[i]).style.right = rg;
     }
   }
+  setTabindex();
 }
 
 //MQTT

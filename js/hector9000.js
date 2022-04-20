@@ -247,6 +247,12 @@ function openDrinkModal(drinkinfo) {
       publish(TopicIngredients, drinkinfo.getAttribute("d_id"));
     }
   }
+  setTimeout(function () {
+    document.activeElement.blur();
+    item = document.getElementById('DM_abbruch');
+    item.focus();
+  },800);
+  
 }
 
 function showIngredientsAndButton(json) {

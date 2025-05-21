@@ -1,1 +1,1 @@
-chromium-browser --start-fullscreen --disable-gpu Main.html
+chromium-browser --kiosk --noerrdialogs --disable-translate --no-first-run --fast --fast-start --disable-infobars --disable-features=TranslateUI --disk-cache-dir=/dev/null Main.html
